@@ -173,12 +173,27 @@ public:
     root = nullptr;
   }
 
+  vector<Flight> *searchByPattern(string pattern) {
+    vector<Flight> *selection = new vector<Flight>();
+    postOrder(root, pattern, selection);
+    return selection;
+  }
+
   void insert(const Flight &x) {
     root = insert(x, root);
   }
 
   void remove(const Flight &x) {
     root = remove(x, root);
+  }
+
+  bool remove(string x) {
+    Flight flight(x);
+    return (remove(flight, root) != nullptr);
+  }
+
+  void removeAll() {
+    makeEmpty(root);
   }
 
   void display() {

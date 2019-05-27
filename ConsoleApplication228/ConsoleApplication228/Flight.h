@@ -14,11 +14,13 @@ private:
 
 public:
   Flight();
+  Flight(std::string);
   Flight(std::string *);
   ~Flight();
 
   bool searchBoyerMoore(std::string);
 
+  friend bool operator==(const Flight &, const Flight &);
   friend bool operator>(const Flight &, const Flight &);
   friend bool operator<(const Flight &, const Flight &);
   friend std::ostream &operator<<(std::ostream &, const Flight &);

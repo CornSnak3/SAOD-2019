@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
 
   int menu = 1;
   while (menu) {
+    system("cls");
     cout << "1 PASSENGERS" << endl << "2 FLIGHTS" << endl << "3 TICKETS" << endl << "0 EXIT" << endl << ">> ";
     menu = inputint();
     if (menu == 0)
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
     else if (menu == 1) { // Пассажиры
       int submenu = 1;
       while (submenu) {
-        system("CLS");
+        system("cls");
         cout << "1 ADD PASSENGER" << endl;
         if (passengerTotal > 0)
           cout << "2 DELETE PASSENGER" << endl << "3 SHOW ALL PASSENGERS" << endl <<
@@ -81,11 +82,10 @@ int main(int argc, char *argv[]) {
         else if (submenu == 5 && passengerTotal > 0)
           searchPassengerByPassport();
       }
-    }
-    else if (menu == 2) { // Авиарейсы
+    } else if (menu == 2) { // Авиарейсы
       int submenu = 1;
       while (submenu) {
-        system("CLS");
+        system("cls");
         cout << "1 ADD FLIGHT " << endl;
         if (flightTotal > 0)
           cout << "2 DELETE FLIGHT" << endl << "3 SHOW ALL FLIGHTS" << endl
@@ -108,11 +108,10 @@ int main(int argc, char *argv[]) {
         else if (submenu == 6 && flightTotal > 0)
           searchFlightByAirport();
       }
-    }
-    else if (menu == 3 && flightTotal > 0 && passengerTotal > 0) {
+    } else if (menu == 3 && flightTotal > 0 && passengerTotal > 0) { // Билеты
       int submenu = 1;
       while (submenu) {
-        system("CLS");
+        system("cls");
         cout << "1 ADD TICKET" << endl;
         if (ticketTotal > 0) {
           cout << "2 RETURN TICKET" << endl << "3 SHOW ALL TICKETS" << endl;
@@ -148,10 +147,11 @@ void addPassenger() {
 }
 
 void deletePassenger() {
-  system("CLS");
+  system("cls");
   string s;
-  cout <<  "DELETE PASSENGER" << endl << "ENTER PASSPORT NUMBER:";
-  cin >> s;
+  cout <<  "DELETE PASSENGER" << endl << "PASSPORT NUMBER:\t";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
   if (passengers.remove(s)) {
     passengerTotal--;
     cout << "PASSENGER REMOVED" << endl;
@@ -171,13 +171,13 @@ void searchPassengerByName() {
 }
 
 void searchPassengerByPassport() {
-  system("CLS");
+  system("cls");
   string s;
-  cout << "Enter Passport Number: ";
+  cout << "PASSPORT NUMBER:\t";
+  cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
   passengers.displaySearchByPassport(s);
-  cout << "Press ENTER to return";
-  cin.get();
+  system("pause");
 }
 
 void addFlight() {
@@ -198,12 +198,54 @@ void addFlight() {
   system("pause");
 }
 
-void deleteFlight() {}
+void deleteFlight() {
+  system("cls");
+  string s;
+  cout << "DELETE FLIGHT" << endl << "FLIGHT NUMBER:\t";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+  if (flights->remove(s)) {
+    passengerTotal--;
+    cout << "FLIGHT REMOVED" << endl;
+  } else
+    cout << "FLIGHT NOT FOUND" << endl;
+  system("pause");
+}
 
-void deleteAllFlights() {}
-void searchFlightByAirport() {}
+void deleteAllFlights() {
+  system("cls");
+  cout << "ALL FLIGHTS REMOVED" << endl;
+  system("pause");
+}
+
+void searchFlightByAirport() {
+  system("cls");
+  string s;
+  cout << "FIND FLIGHT BY DEPARTURE AIRPORT" << endl << "PATTERN:\t";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+  vector<Flight> *selection = flights->searchByPattern(s);
+  system("cls");
+  cout << "SEARCH RESULTS FOR PATTERN \"" << s << "\"" << endl;
+  cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
+    setw(15) << left << "DEPARTURE" << setw(15) << left << "ARRIVAL" << setw(10) <<
+    left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
+    setw(10) << left << "FREE SEATS" << endl;
+  for (auto &flight : *selection)
+    cout << flight;
+  system("pause");
+}
+
 void searchFlightByNumber() {}
-void showAllFlights() {}
+void showAllFlights() {
+  system("cls");
+  cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
+    setw(15) << left << "DEPARTURE" << setw(15) << left << "ARRIVAL" << setw(10) <<
+    left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
+    setw(10) << left << "FREE SEATS" << endl;
+
+  system("pause");
+}
 
 void addTicket() {}
 void returnTicket() {}
