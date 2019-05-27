@@ -12,6 +12,7 @@ private:
 
 public:
   Passenger();
+  Passenger(std::string);
   Passenger(std::string *);
   Passenger(Passenger *);
   ~Passenger();

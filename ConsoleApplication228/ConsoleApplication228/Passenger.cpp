@@ -4,6 +4,10 @@ using namespace std;
 
 Passenger::Passenger() {}
 
+Passenger::Passenger(string x) {
+  this->passportNumber = x;
+}
+
 Passenger::Passenger(string *x) {
   //if (!validateNumber(x[0]))
     //throw new std::invalid_argument("Некорректный номер паспорта");
@@ -59,8 +63,8 @@ string Passenger::getHashingValue() const  {
 }
 
 ostream &operator<<(ostream &o, const Passenger &p) {
-  o << p.getNumber() << " | " << p.getDateOfIssue() << " | " <<
-    p.getFullName() << " | " << p.getBirthdayDate() << endl;
+  o << p.getNumber() << "\t" << p.getDateOfIssue() << "\t" <<
+    p.getFullName() << "\t" << p.getBirthdayDate() << endl;
   return o;
 }
 

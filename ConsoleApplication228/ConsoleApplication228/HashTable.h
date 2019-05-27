@@ -29,6 +29,7 @@ public:
   }
 
   void display() {
+    std::cout << "Passport #\tDate of Issue\tFull name:\tBirthday date: " <<std::endl;
     for (auto & hashEntry : data) {
       if (hashEntry.status == OCCUPIED)
         cout << hashEntry.value << endl;
@@ -58,8 +59,17 @@ public:
     int currentPosition = findPosition(x);
     if (data[currentPosition].status != OCCUPIED)
       return false;
-    data[currentPosition].status = REMOVED;
-    return true;
+    if (data[currentPosition].value.getHashingValue() == x.value.getHashingValue()) {
+      data[currentPosition].status = REMOVED;
+      return true;
+    }
+    return false;
+  }
+  
+  bool remove(std::string x) {
+    Passenger passenger(x);
+    HashEntry hashEntry(passenger);
+    return remove(hashEntry);
   }
   
 private:
