@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+
 #include "Passenger.h"
 
 using namespace std;
@@ -63,8 +66,11 @@ string Passenger::getHashingValue() const  {
 }
 
 ostream &operator<<(ostream &o, const Passenger &p) {
-  o << p.getNumber() << "\t" << p.getDateOfIssue() << "\t" <<
-    p.getFullName() << "\t" << p.getBirthdayDate() << endl;
+  string fullName = (p.fullName.size() > 38) ? p.fullName.substr(0, 38) : p.fullName;
+  string issueDate = (p.passportDateOfIssue.size() > 18) ? p.getDateOfIssue().substr(0, 18) : p.getDateOfIssue();
+
+  o << setw(15) << left << p.getNumber() << setw(20) << left << issueDate <<
+    setw(40) << left << fullName << setw(20) << left << p.getBirthdayDate() << endl;
   return o;
 }
 

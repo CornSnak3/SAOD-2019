@@ -29,7 +29,8 @@ public:
   }
 
   void display() {
-    std::cout << "PASSPORT #\tDATE OF ISSUE\tFULL NAME:\tBIRTHDAY DATE: " <<std::endl;
+    cout << setw(15) << left << "PASSPORT #" << setw(20) << left << "DATE OF ISSUE" <<
+      setw(40) << left << "FULL NAME" << setw(20) << left << "BIRTHDAY DATE" << endl;
     for (auto & hashEntry : data) {
       if (hashEntry.status == OCCUPIED)
         cout << hashEntry.value << endl;
@@ -58,11 +59,12 @@ public:
   void displaySearchByPassport(string x) {
     Passenger passenger(x);
     HashEntry hashEntry(passenger);
-    int currentPosition = findPosition(hashEntry);
+    int currentPosition = hashCode(passenger);
     if (data[currentPosition].status == OCCUPIED &&
         data[currentPosition].value.getHashingValue() == hashEntry.value.getHashingValue())
     {
-      std::cout << "PASSPORT #\tDATE OF ISSUE\tFULL NAME:\tBIRTHDAY DATE: " << std::endl <<
+      cout << setw(15) << left << "PASSPORT #" << setw(20) << left << "DATE OF ISSUE" <<
+        setw(40) << left << "FULL NAME" << setw(20) << left << "BIRTHDAY DATE" << endl <<
         data[currentPosition].value;
     } else
       cout << "PASSENGER NOT FOUND" << endl;
@@ -99,10 +101,12 @@ private:
       return h % this->data.capacity();
   }  
   
+
+
   int findPosition(const HashEntry &x) const {
     int offset = 1;
     int currentPosition = hashCode(x.value);
-    while ((data[currentPosition].status != EMPTY) && (data[currentPosition].value != x.value)) {
+    while (data[currentPosition].status != EMPTY && data[currentPosition].value != x.value) {
       currentPosition += offset * offset;
       offset++;
       currentPosition = currentPosition % this->data.size();

@@ -236,14 +236,26 @@ void searchFlightByAirport() {
   system("pause");
 }
 
-void searchFlightByNumber() {}
-void showAllFlights() {
+void searchFlightByNumber() {
   system("cls");
+  system("cls");
+  string s;
+  cout << "FIND FLIGHT BY DEPARTURE AIRPORT" << endl << "PATTERN:\t";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+  system("cls");
+  cout << "SEARCH RESULTS FOR NUMBER " << s  << endl;
   cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
     setw(15) << left << "DEPARTURE" << setw(15) << left << "ARRIVAL" << setw(10) <<
     left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
     setw(10) << left << "FREE SEATS" << endl;
+  flights->searchByNumber(s);
+  system("pause");
+}
 
+void showAllFlights() {
+  system("cls");
+  flights->display();
   system("pause");
 }
 

@@ -179,6 +179,25 @@ public:
     return selection;
   }
 
+  bool searchByNumber(const Flight &f, treeNode *t) {
+    if (t == nullptr)
+      return false;
+    if (f > t->data)
+      return searchByNumber(f, t->right);
+    else if (f < t->data)
+      return searchByNumber(f, t->left);
+    else {
+      cout << t->data;
+      return true;
+    }
+  }
+
+  void searchByNumber(string number) {
+    Flight flight(number);
+    if (!searchByNumber(flight, root))
+      cout << "FLIGHT NOT FOUND" << endl;
+  }
+
   void insert(const Flight &x) {
     root = insert(x, root);
   }
@@ -197,7 +216,10 @@ public:
   }
 
   void display() {
-    cout << "Number\tCompany\tDeparture Airport\t=>\tArrivalAirport\tFree Seats\tTotal Seats" << endl;
+    cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
+      setw(15) << left << "DEPARTURE" << setw(15) << left << "ARRIVAL" << setw(10) <<
+      left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
+      setw(10) << left << "FREE SEATS" << endl;
     postOrder(root);
   }
 
