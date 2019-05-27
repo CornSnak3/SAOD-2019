@@ -14,7 +14,7 @@ private:
 
 public:
   Flight();
-  Flight(std::string *, int *);
+  Flight(std::string *);
   ~Flight();
 
   bool searchBoyerMoore(std::string);

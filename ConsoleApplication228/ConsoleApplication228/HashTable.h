@@ -29,7 +29,7 @@ public:
   }
 
   void display() {
-    std::cout << "Passport #\tDate of Issue\tFull name:\tBirthday date: " <<std::endl;
+    std::cout << "PASSPORT #\tDATE OF ISSUE\tFULL NAME:\tBIRTHDAY DATE: " <<std::endl;
     for (auto & hashEntry : data) {
       if (hashEntry.status == OCCUPIED)
         cout << hashEntry.value << endl;
@@ -53,10 +53,23 @@ public:
 	if (this->currentSize > this->data.capacity() / 2)
 		rehash();
     return true;
-  }  
+  } 
+
+  void displaySearchByPassport(string x) {
+    Passenger passenger(x);
+    HashEntry hashEntry(passenger);
+    int currentPosition = findPosition(hashEntry);
+    if (data[currentPosition].status == OCCUPIED &&
+        data[currentPosition].value.getHashingValue() == hashEntry.value.getHashingValue())
+    {
+      std::cout << "PASSPORT #\tDATE OF ISSUE\tFULL NAME:\tBIRTHDAY DATE: " << std::endl <<
+        data[currentPosition].value;
+    } else
+      cout << "PASSENGER NOT FOUND" << endl;
+  }
 
   bool remove(const HashEntry &x) {
-    int currentPosition = findPosition(x);
+    int currentPosition = findPosition(x) - 1;
     if (data[currentPosition].status != OCCUPIED)
       return false;
     if (data[currentPosition].value.getHashingValue() == x.value.getHashingValue()) {

@@ -21,15 +21,15 @@ bool Flight::validateNumber(string) const  {
 
 Flight::Flight() {}
 
-Flight::Flight(string *s, int *x) {
+Flight::Flight(string *s) {
   this->number = s[0];
   this->company = s[1];
   this->departureAirport = s[2];
   this->arrivalAirport = s[3];
   this->departureDate = s[4];
   this->departureTime = s[5];
-  this->totalSeats = x[0];
-  this->freeSeats = x[1];
+  this->totalSeats = stoi(s[6]);
+  this->freeSeats = stoi(s[7]);
 }
 
 Flight::~Flight() {}
@@ -48,6 +48,7 @@ bool Flight::searchBoyerMoore(string pattern) {
       j--;
     return (j < 0) ? true : false;
   }
+  return false;
 }
 
 bool operator>(const Flight &l, const Flight &r) {
@@ -65,7 +66,7 @@ bool operator<(const Flight &l, const Flight &r) {
 }
 
 ostream &operator<<(ostream &o, const Flight &f) {
-  o << setw(10) << right << f.number << setw(25) << f.company << setw(5) << right << f.departureAirport << "=>" <<
-    setw(5) << f.arrivalAirport << setw(7) << f.departureTime << setw(4) << f.freeSeats << "/" << f.totalSeats << endl;
+  o << f.number << "\t" << f.company << "\t" << f.departureAirport << "\t=>\t" <<
+    f.arrivalAirport << "\t" << f.departureTime << "\t" << f.freeSeats << "\t/\t" << f.totalSeats << endl;
   return o;
 }

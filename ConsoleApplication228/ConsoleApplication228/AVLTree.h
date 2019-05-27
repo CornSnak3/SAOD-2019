@@ -160,6 +160,14 @@ class AVLTree {
       v->push_back(t->data);
   }
 
+  void postOrder(treeNode *t) {
+    if (t == nullptr)
+      return;
+    postOrder(t->left);
+    postOrder(t->right);
+    cout << t->data;
+  }
+
 public:
   AVLTree() {
     root = nullptr;
@@ -173,8 +181,9 @@ public:
     root = remove(x, root);
   }
 
-  Flight *searchFlight(string s) {
-
+  void display() {
+    cout << "Number\tCompany\tDeparture Airport\t=>\tArrivalAirport\tFree Seats\tTotal Seats" << endl;
+    postOrder(root);
   }
 
 };
