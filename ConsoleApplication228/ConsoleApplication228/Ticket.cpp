@@ -19,8 +19,13 @@ Ticket::Ticket(string *s, TicketStatus ts) {
   this->status = ts;
 }
 
-void Ticket::flipStatus() {
-  this->status == (this->status == SOLD) ? RETURNED : SOLD;
+string Ticket::getTicketNumber() {
+  return this->ticketNumber;
+}
+
+bool Ticket::flipStatus() {
+  this->status = RETURNED;
+  return true;
 }
 
 bool operator<(const Ticket &l, const Ticket &r) {
@@ -38,13 +43,8 @@ bool operator==(const Ticket &r, const Ticket &l) {
 }
 
 ostream &operator<<(ostream &o, const Ticket &t) {
-  HANDLE  hConsole;
-  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  int c = (t.status == SOLD) ? 2 : 4;
-  SetConsoleTextAttribute(hConsole, c);
-
-  cout << setw(15) << t.ticketNumber << setw(15) << t.flightNumber << setw(15) << t.passportNumber << endl;
-  SetConsoleTextAttribute(hConsole, 15);
- 
+  string temp = (t.status == SOLD) ? "SOLD" : "RETURNED";
+  cout << setw(15) << left << t.ticketNumber << setw(15) << left << t.flightNumber <<
+    setw(15) << left << t.passportNumber << setw(10) << left << temp << endl; 
   return o;
 }

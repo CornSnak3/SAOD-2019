@@ -141,6 +141,14 @@ void DoublyLinkedList::remove(Ticket data) {
   }
 }
 
+bool DoublyLinkedList::returnTicket(string s) {
+  for (int i = 0; i < this->size; i++) {
+    if (this->at(i)->data.getTicketNumber() == s)
+      return this->at(i)->data.flipStatus();
+  }
+  return false;
+}
+
 void DoublyLinkedList::display() const {
   cout << setw(15) << left << "TICKET #" << setw(15) 
     << "FLIGHT" << setw(15) << "PASSPORT" << endl;
@@ -152,11 +160,7 @@ void DoublyLinkedList::display() const {
 }
 
 string DoublyLinkedList::getNextTicketNumber() {
-  string out = "000000000";
-  int number = this->size + 1;
-  for (int i = out.size() - 1; number > 0; i--) {
-    out[i] = number % 10;
-    number /= 10;
-  }
-  return out;
+  string number = to_string(this->size + 1);
+  number.insert(number.begin(), 9 - number.length(), '0');
+  return number;
 }

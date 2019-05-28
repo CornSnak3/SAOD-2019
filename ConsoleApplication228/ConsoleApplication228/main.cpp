@@ -38,6 +38,7 @@ void searchFlightByAirport();
 void searchFlightByNumber();
 void showAllFlights();
 
+void addTicket(const Passenger &, const Flight &);
 void addTicket();
 void returnTicket();
 void showAllTickets();
@@ -117,10 +118,10 @@ int main(int argc, char *argv[]) {
       while (submenu) {
         system("cls");
         cout << "1 ADD TICKET" << endl;
-        submenu = inputint();
         if (ticketTotal > 0)
           cout << "2 RETURN TICKET" << endl << "3 SHOW ALL TICKETS" << endl;
         cout << "0 BACK" << endl << ">> ";
+        submenu = inputint();
         if (submenu == 0)
           break;
         else if (submenu == 1)
@@ -156,7 +157,11 @@ int main(int argc, char *argv[]) {
         Flight f(sParams);
         flights->insert(f);
         flightTotal++;
+        addTicket(leo, f);
+        addTicket(nikita, f);
+        addTicket(batya, f);
       }
+
     }
   }
 }
@@ -272,7 +277,6 @@ void searchFlightByAirport() {
 
 void searchFlightByNumber() {
   system("cls");
-  system("cls");
   string s;
   cout << "FIND FLIGHT BY FLIGHT NUMBER" << endl << setw(25) << left << "PATTERN";
   cin.ignore(cin.rdbuf()->in_avail());
@@ -292,6 +296,13 @@ void showAllFlights() {
   system("cls");
   flights->display();
   system("pause");
+}
+
+void addTicket(const Passenger &p, const Flight &f) {
+  string s[] = { p.getNumber(), f.getFlightNumber(), tickets->getNextTicketNumber() };
+  Ticket ticket(s, SOLD);
+  tickets->pushBack(ticket);
+  ticketTotal++;
 }
 
 void addTicket() {
@@ -317,7 +328,22 @@ void addTicket() {
   ticketTotal++;
   system("pause");
 }
-void returnTicket() {}
+
+void returnTicket() {
+  system("cls");
+  tickets->display();
+  string s;
+  cout << "RETURN TICKET" << endl << setw(25) << "NUMBER";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+  if (tickets->returnTicket(s)) {
+    ticketTotal--;
+    cout << "TICKET RETURNED" << endl;
+  }
+  else
+    cout << "TICKET NOT FOUND" << endl;
+  system("pause");
+}
 
 void showAllTickets() {
   system("cls");

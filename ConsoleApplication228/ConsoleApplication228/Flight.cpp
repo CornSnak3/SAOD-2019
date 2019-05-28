@@ -63,6 +63,10 @@ bool Flight::searchBoyerMoore(string substring) {
   return false;
 }
 
+string Flight::getFlightNumber() const {
+  return this->number;
+}
+
 int Flight::getFreeSeats() {
   return this->freeSeats;
 }

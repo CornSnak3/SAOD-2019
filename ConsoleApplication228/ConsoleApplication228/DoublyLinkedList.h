@@ -31,6 +31,7 @@ public:
   void pushBack(const Ticket &);
   void remove(int);
   void remove(Ticket);
+  bool returnTicket(std::string);
   void insertionSort();
   void display() const;
   std::string getNextTicketNumber();

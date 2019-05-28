@@ -20,6 +20,7 @@ public:
   bool searchBoyerMoore(std::string);
 
   int getFreeSeats();
+  std::string getFlightNumber() const;
   void sellTicket();
 
   friend bool operator==(const Flight &, const Flight &);
