@@ -22,6 +22,7 @@ public:
   int getFreeSeats();
   std::string getFlightNumber() const;
   void sellTicket();
+  void returnTicket();
 
   friend bool operator==(const Flight &, const Flight &);
   friend bool operator>(const Flight &, const Flight &);

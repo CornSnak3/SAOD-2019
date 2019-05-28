@@ -64,6 +64,14 @@ public:
             data[currentPosition].value.getHashingValue() == hashEntry.value.getHashingValue());
   }
 
+  void displaySearchByName(string x) {
+    for (auto &p : this->data)
+      if (p.value.getFullName == x)
+        displaySearchByPassport(p.value.getNumber());
+      else
+        cout << "PASSENGER NOT FOUND" << endl;
+  }
+
   void displaySearchByPassport(string x) {
     Passenger passenger(x);
     HashEntry hashEntry(passenger);

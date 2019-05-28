@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
         sParams[2] = airPorts[i % 6];
         sParams[3] = airPorts[(10 - i) % 6];
         sParams[4] = sParams[5] = "N/A";
-        sParams[6] = "228";
+        sParams[6] = "6" + to_string(i * i);
         Flight f(sParams);
         flights->insert(f);
         flightTotal++;
@@ -161,7 +161,6 @@ int main(int argc, char *argv[]) {
         addTicket(nikita, f);
         addTicket(batya, f);
       }
-
     }
   }
 }
@@ -188,8 +187,9 @@ void addPassenger() {
 
 void deletePassenger() {
   system("cls");
+  passengers->display();
   string s;
-  cout <<  "DELETE PASSENGER" << endl << "PASSPORT NUMBER:\t";
+  cout <<  "DELETE PASSENGER" << endl << setw(25) << "PASSPORT NUMBER";
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
   if (passengers->remove(s)) {
@@ -207,13 +207,19 @@ void showAllPassengers() {
 }
 
 void searchPassengerByName() {
-
+  system("cls");
+  string s;
+  cout << setw(25) << left << "PASSPORT NUMBER";
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+  passengers->displaySearchByName(s);
+  system("pause");
 }
 
 void searchPassengerByPassport() {
   system("cls");
   string s;
-  cout << "PASSPORT NUMBER:\t";
+  cout << setw(25) << left << "PASSPORT NUMBER";
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
   passengers->displaySearchByPassport(s);
@@ -239,12 +245,13 @@ void addFlight() {
 
 void deleteFlight() {
   system("cls");
+  flights->display();
   string s;
   cout << "DELETE FLIGHT" << endl << setw(25) << left << "FLIGHT NUMBER";
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
   if (flights->remove(s)) {
-    passengerTotal--;
+    flightTotal--;
     cout << "FLIGHT REMOVED" << endl;
   } else
     cout << "FLIGHT NOT FOUND" << endl;
@@ -298,11 +305,12 @@ void showAllFlights() {
   system("pause");
 }
 
-void addTicket(const Passenger &p, const Flight &f) {
+void addTicket(const Passenger &p, Flight &f) {
   string s[] = { p.getNumber(), f.getFlightNumber(), tickets->getNextTicketNumber() };
   Ticket ticket(s, SOLD);
   tickets->pushBack(ticket);
   ticketTotal++;
+  f.sellTicket();
 }
 
 void addTicket() {

@@ -30,35 +30,31 @@ Flight::Flight(string *s) {
 Flight::~Flight() {}
 
 bool Flight::searchBoyerMoore(string substring) {
-  string s = this->departureAirport;
-  int sl, ssl;
+  string _string = this->departureAirport;
+  int stringLength, substringLength;
   int res = -1;
-  sl = s.length();
-  ssl = substring.length();
-  if (sl < ssl)
+  stringLength = _string.length();
+  substringLength = substring.length();
+  if (stringLength < substringLength)
     return false;
-  int i, Pos;
-  int BMT[128];
+  int i, position;
+  int boyerMooreTable[128];
   for (i = 0; i < 128; i++)
-    BMT[i] = ssl;
-  for (i = ssl - 1; i >= 0; i--)
-    if (BMT[(short)(substring[i])] == ssl)
-      BMT[(short)(substring[i])] = ssl - i - 1;
-  Pos = ssl - 1;
-  while (Pos < sl)
-    if (substring[ssl - 1] != s[Pos])
-      Pos = Pos + BMT[(short)(s[Pos])];
+    boyerMooreTable[i] = substringLength;
+  for (i = substringLength - 1; i >= 0; i--)
+    if (boyerMooreTable[substring[i]] == substringLength)
+      boyerMooreTable[substring[i]] = substringLength - i - 1;
+  position = substringLength - 1;
+  while (position < stringLength)
+    if (substring[substringLength - 1] != _string[position])
+      position = position + boyerMooreTable[_string[position]];
     else
-      for (i = ssl - 2; i >= 0; i--) {
-        if (substring[i] != s[Pos - ssl + i + 1]) {
-          Pos += BMT[(short)(s[Pos - ssl + i + 1])] - 1;
+      for (i = substringLength - 2; i >= 0; i--) {
+        if (substring[i] != _string[position - substringLength + i + 1]) {
+          position += boyerMooreTable[_string[position - substringLength + i + 1]] - 1;
           break;
-        }
-        else
-          if (i == 0)
-          {
+        } else if (i == 0)
             return true;
-          }
       }
   return false;
 }
@@ -73,6 +69,10 @@ int Flight::getFreeSeats() {
 
 void Flight::sellTicket() {
   this->freeSeats--;
+}
+
+void Flight::returnTicket() {
+  this->freeSeats++;
 }
 
 bool operator==(const Flight &l, const Flight &r) {

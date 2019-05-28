@@ -207,7 +207,7 @@ public:
     Flight flight(number);
     return isTicketAvailible(flight, root);
   }
- 
+
   bool searchByNumber(string number) {
     Flight flight(number);
     return searchByNumber(flight, root);
