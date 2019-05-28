@@ -8,14 +8,14 @@ class Passenger {
 private:
   std::string passportNumber, passportDateOfIssue, fullName, birthdayDate;
 
-  bool validateNumber(std::string) const;
-
 public:
   Passenger();
   Passenger(std::string);
   Passenger(std::string *);
   Passenger(Passenger *);
   ~Passenger();
+
+  bool validateNumber(std::string) const;
 
   std::string getNumber() const;
   std::string getDateOfIssue() const;

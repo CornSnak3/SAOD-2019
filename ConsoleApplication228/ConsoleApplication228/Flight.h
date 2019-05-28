@@ -10,7 +10,6 @@ private:
   unsigned int totalSeats, freeSeats;
   
   bool validateNumber(std::string) const ;
-  void badCharHeuritics(std::string, int, int *);
 
 public:
   Flight();
@@ -19,6 +18,9 @@ public:
   ~Flight();
 
   bool searchBoyerMoore(std::string);
+
+  int getFreeSeats();
+  void sellTicket();
 
   friend bool operator==(const Flight &, const Flight &);
   friend bool operator>(const Flight &, const Flight &);

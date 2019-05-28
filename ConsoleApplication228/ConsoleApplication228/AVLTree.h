@@ -192,10 +192,25 @@ public:
     }
   }
 
-  void searchByNumber(string number) {
+  bool isTicketAvailible(const Flight &f, treeNode *t) {
+    if (t == nullptr)
+      return false;
+    if (f > t->data)
+      return isTicketAvailible(f, t->right);
+    else if (f < t->data)
+      return isTicketAvailible(f, t->left);
+    else {
+      return t->data.getFreeSeats() != 0;
+    }
+  }
+  bool isTicketAvailible(string number) {
     Flight flight(number);
-    if (!searchByNumber(flight, root))
-      cout << "FLIGHT NOT FOUND" << endl;
+    return isTicketAvailible(flight, root);
+  }
+ 
+  bool searchByNumber(string number) {
+    Flight flight(number);
+    return searchByNumber(flight, root);
   }
 
   void insert(const Flight &x) {
@@ -217,7 +232,7 @@ public:
 
   void display() {
     cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
-      setw(15) << left << "DEPARTURE" << setw(15) << left << "ARRIVAL" << setw(10) <<
+      setw(25) << left << "DEPARTURE" << setw(25) << left << "ARRIVAL" << setw(10) <<
       left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
       setw(10) << left << "FREE SEATS" << endl;
     postOrder(root);

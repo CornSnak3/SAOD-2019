@@ -8,12 +8,15 @@ using namespace std;
 Passenger::Passenger() {}
 
 Passenger::Passenger(string x) {
-  this->passportNumber = x;
+  if (validateNumber(x))
+    this->passportNumber = x;
+  else
+    throw new std::invalid_argument("INCORRECT PASSPORT NUMBER");
 }
 
 Passenger::Passenger(string *x) {
-  //if (!validateNumber(x[0]))
-    //throw new std::invalid_argument("Некорректный номер паспорта");
+  if (!validateNumber(x[0]))
+    throw new std::invalid_argument("INCORRECT PASSPORT NUMBER");
   this->passportNumber = x[0];
   this->passportDateOfIssue = x[1];
   this->fullName = x[2];
@@ -30,18 +33,11 @@ Passenger::Passenger(Passenger *p) {
 Passenger::~Passenger() { }
 
 bool Passenger::validateNumber(string number) const {
-  if (passportNumber.size() != 11)
-    return false;
-  if (passportNumber[4] != '-')
-    return false;
-    
-  for (unsigned int i = 0; i < passportNumber.size(); i++) {
-    if (i == 4)
-      continue;
-    if (!isdigit(passportNumber[i]))
+  if (number[4] != '-' || number.size() != 11)
+    return false;    
+  for (unsigned int i = 0; i < number.size(); i++)
+    if (!isdigit(number[i]) && number[i] != '-')
       return false;
-  }
-  
   return true;
 }
 

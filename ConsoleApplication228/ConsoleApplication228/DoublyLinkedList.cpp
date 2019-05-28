@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 
 #include "DoublyLinkedList.h"
@@ -141,9 +142,21 @@ void DoublyLinkedList::remove(Ticket data) {
 }
 
 void DoublyLinkedList::display() const {
+  cout << setw(15) << left << "TICKET #" << setw(15) 
+    << "FLIGHT" << setw(15) << "PASSPORT" << endl;
   nodePtr currentNode = this->head;
   while (currentNode != nullptr) {
     cout << currentNode->data;
     currentNode = currentNode->next;
   }
+}
+
+string DoublyLinkedList::getNextTicketNumber() {
+  string out = "000000000";
+  int number = this->size + 1;
+  for (int i = out.size() - 1; number > 0; i--) {
+    out[i] = number % 10;
+    number /= 10;
+  }
+  return out;
 }

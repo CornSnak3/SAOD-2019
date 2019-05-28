@@ -43,7 +43,7 @@ ostream &operator<<(ostream &o, const Ticket &t) {
   int c = (t.status == SOLD) ? 2 : 4;
   SetConsoleTextAttribute(hConsole, c);
 
-  cout << setw(15) << t.ticketNumber << setw(10) << t.flightNumber << setw(15) << t.passportNumber << endl;
+  cout << setw(15) << t.ticketNumber << setw(15) << t.flightNumber << setw(15) << t.passportNumber << endl;
   SetConsoleTextAttribute(hConsole, 15);
  
   return o;

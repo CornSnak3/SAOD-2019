@@ -56,6 +56,14 @@ public:
     return true;
   } 
 
+  bool contains(string x) {
+    Passenger passenger(x);
+    HashEntry hashEntry(passenger);
+    int currentPosition = hashCode(passenger);
+    return (data[currentPosition].status == OCCUPIED &&
+            data[currentPosition].value.getHashingValue() == hashEntry.value.getHashingValue());
+  }
+
   void displaySearchByPassport(string x) {
     Passenger passenger(x);
     HashEntry hashEntry(passenger);

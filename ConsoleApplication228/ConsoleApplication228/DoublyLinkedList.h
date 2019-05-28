@@ -2,6 +2,7 @@
 #define DOUBLYLINKEDLIST_H
 
 #include <iostream>
+#include <string>
 
 #include "Ticket.h"
 
@@ -32,6 +33,7 @@ public:
   void remove(Ticket);
   void insertionSort();
   void display() const;
+  std::string getNextTicketNumber();
 };
 
 #endif // DOUBLYLINKEDLIST_H
