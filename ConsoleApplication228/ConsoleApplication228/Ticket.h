@@ -17,6 +17,7 @@ public:
   std::string getTicketNumber();
 
   bool flipStatus();
+  std::string getFlightNumber();
 
   friend bool operator<(const Ticket &, const Ticket &);
   friend bool operator==(const Ticket &, const Ticket &);

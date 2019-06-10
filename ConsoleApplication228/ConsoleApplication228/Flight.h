@@ -2,32 +2,33 @@
 #define AIRFLIGHT_H
 
 #include <string>
+#include <vector>
 
 class Flight {
 private:
-  std::string number, company, departureAirport, arrivalAirport;
-  std::string departureDate, departureTime;
-  unsigned int totalSeats, freeSeats;
+
+  std::vector<std::pair<std::string, std::string>> fields = {
+    std::make_pair("flightNumber", ""),
+    std::make_pair("company", ""),
+    std::make_pair("departureAirport", ""),
+    std::make_pair("arrivalAirport", ""),
+    std::make_pair("departureDate", ""),
+    std::make_pair("totalSeats", ""),
+    std::make_pair("freeSeats", ""),
+  };
   
   bool validateNumber(std::string) const ;
 
 public:
   Flight();
-  Flight(std::string);
-  Flight(std::string *);
+  Flight(std::initializer_list<std::string> &);
   ~Flight();
-
+  std::string getField(std::string);
   bool searchBoyerMoore(std::string);
 
-  int getFreeSeats();
-  std::string getFlightNumber() const;
-  void sellTicket();
-  void returnTicket();
-
-  friend bool operator==(const Flight &, const Flight &);
-  friend bool operator>(const Flight &, const Flight &);
-  friend bool operator<(const Flight &, const Flight &);
-  friend std::ostream &operator<<(std::ostream &, const Flight &);
+  bool operator<(Flight &);
+  bool operator>(Flight &);
+  bool operator==(Flight &);
 };
 
 #endif // AIRFLIGHT_H

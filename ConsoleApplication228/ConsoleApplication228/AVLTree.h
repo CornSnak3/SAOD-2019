@@ -7,6 +7,8 @@
 using namespace std;
 
 class AVLTree {
+private:
+
   struct treeNode {
     Flight data;
     treeNode *left;
@@ -16,71 +18,15 @@ class AVLTree {
 
   treeNode *root;
 
-  void makeEmpty(treeNode *t) {
-    if (t == nullptr)
-      return;
-    makeEmpty(t->left);
-    makeEmpty(t->right);
-    delete t;
-  }
+  void makeEmpty(treeNode *t);
 
-  treeNode *insert(const Flight &x, treeNode *t) {
-    if (t == nullptr) {
-      t = new treeNode;
-      t->data = x;
-      t->height = 0;
-      t->left = t->right = nullptr;
-    } else if (x < t->data) {
-      t->left = insert(x, t->left);
-      if (height(t->left) - height(t->right) == 2) {
-        if (x < t->left->data)
-          t = singleRightRotate(t);
-        else
-          t = doubleRightRotate(t);
-      }
-    } else if (x > t->data) {
-      t->right = insert(x, t->right);
-      if (height(t->right) - height(t->left) == 2) {
-        if (x > t->right->data)
-          t = singleLeftRotate(t);
-        else
-          t = doubleLeftRotate(t);
-      }
-    }
+  treeNode *insert(Flight &, treeNode *);
 
-    t->height = max(height(t->left), height(t->right)) + 1;
-    return t;
-  }
+  treeNode *singleRightRotate(treeNode * &);
+  treeNode *singleLeftRotate(treeNode * &);
 
-  treeNode *singleRightRotate(treeNode * &t) {
-    treeNode *u = t->left;
-    t->left = u->right;
-    u->right = t;
-    t->height = max(height(t->left), height(t->right)) + 1;
-    u->height = max(height(u->left), t->height) + 1;
-    return u;
-  }
-
-  treeNode *singleLeftRotate(treeNode * &t) {
-    treeNode *u = t->right;
-    t->right = u->left;
-    u->left = t;
-    t->height = max(height(t->left), height(t->right)) + 1;
-    u->height = max(height(t->right), t->height) + 1;
-    return u;
-  }
-
-  treeNode *doubleLeftRotate(treeNode * &t)
-  {
-    t->right = singleRightRotate(t->right);
-    return singleLeftRotate(t);
-  }
-
-  treeNode *doubleRightRotate(treeNode * &t)
-  {
-    t->left = singleLeftRotate(t->left);
-    return singleRightRotate(t);
-  }
+  treeNode *doubleRightRotate(treeNode * &);
+  treeNode *doubleLeftRotate(treeNode * &);
 
   treeNode *findMin(treeNode *t) {
     if (t == nullptr)

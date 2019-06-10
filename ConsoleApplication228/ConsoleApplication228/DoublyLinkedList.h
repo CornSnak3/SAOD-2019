@@ -34,6 +34,8 @@ public:
   bool returnTicket(std::string);
   void insertionSort();
   void display() const;
+  int getSize();
+  Ticket att(int);
   std::string getNextTicketNumber();
 };
 

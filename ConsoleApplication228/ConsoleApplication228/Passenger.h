@@ -3,29 +3,31 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Passenger {
 private:
-  std::string passportNumber, passportDateOfIssue, fullName, birthdayDate;
+  std::vector<std::pair<std::string, std::string>> fields ={
+    std::make_pair("passportNumber", ""),
+    std::make_pair("passportDateOfIssue", ""),
+    std::make_pair("fullName", ""),
+    std::make_pair("birthdayDate", "")
+  };
 
 public:
   Passenger();
-  Passenger(std::string);
-  Passenger(std::string *);
+  Passenger(std::initializer_list<std::string> &);
   Passenger(Passenger *);
   ~Passenger();
 
   bool validateNumber(std::string) const;
 
-  std::string getNumber() const;
-  std::string getDateOfIssue() const;
-  std::string getFullName() const;
-  std::string getBirthdayDate() const;
-  std::string getHashingValue() const;
+  std::string getField(std::string) const;
+  std::vector<std::string> getVector() const;
+  std::string getHashingValue(std::string) const;
 
-  friend bool operator==(const Passenger, const Passenger);
-  friend bool operator!=(const Passenger, const Passenger);
-  friend std::ostream &operator<<(std::ostream &, const Passenger &);
+  friend bool operator==(const Passenger &, const Passenger &);
+  friend bool operator!=(const Passenger &, const Passenger&);
 };
 
 #endif // PASSENGER_H

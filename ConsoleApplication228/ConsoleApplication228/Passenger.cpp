@@ -1,38 +1,33 @@
 #include <iomanip>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "Passenger.h"
 
-using namespace std;
-
 Passenger::Passenger() {}
 
-Passenger::Passenger(string x) {
-  if (validateNumber(x))
-    this->passportNumber = x;
-  else
-    throw new std::invalid_argument("INCORRECT PASSPORT NUMBER");
-}
-
-Passenger::Passenger(string *x) {
-  if (!validateNumber(x[0]))
-    throw new std::invalid_argument("INCORRECT PASSPORT NUMBER");
-  this->passportNumber = x[0];
-  this->passportDateOfIssue = x[1];
-  this->fullName = x[2];
-  this->birthdayDate = x[3];
+Passenger::Passenger(std::initializer_list<std::string> &initList) {
+  if ((initList.size() != fields.size()))
+    throw new std::invalid_argument("INCORRECT PASSENGER INITIALIZATION");
+  int count = 0;
+  for (auto s : initList) {
+    if (count == 0)
+      if (!validateNumber(s))
+        throw new std::invalid_argument("INVALID PASSPORT NUMBER");
+    fields.at(count++).second = s;
+  }
 }
 
 Passenger::Passenger(Passenger *p) {
-  this->passportNumber = p->passportNumber;
-  this->passportDateOfIssue = p->passportDateOfIssue;
-  this->fullName = p->fullName;
-  this->birthdayDate = p->birthdayDate;
+  int count = 0;
+  for (auto s : p->fields)
+    fields.at(count++).second = s.second;
 }
 
 Passenger::~Passenger() { }
 
-bool Passenger::validateNumber(string number) const {
+bool Passenger::validateNumber(std::string number) const {
   if (number[4] != '-' || number.size() != 11)
     return false;    
   for (unsigned int i = 0; i < number.size(); i++)
@@ -41,42 +36,32 @@ bool Passenger::validateNumber(string number) const {
   return true;
 }
 
-string Passenger::getNumber() const  {
-  return this->passportNumber;
+std::string Passenger::getField(std::string name) const {
+  for (auto v : fields) {
+    if (v.first == name)
+      return v.second;
+  }
+  throw new std::invalid_argument("FIELD NOT FOUND");
 }
 
-string Passenger::getDateOfIssue() const  {
-  return this->passportDateOfIssue;
+std::vector<std::string> Passenger::getVector() const {
+  std::vector<std::string> returnVector;
+  for (auto p : fields)
+    returnVector.push_back(p.second);
+  return returnVector;
 }
 
-string Passenger::getFullName() const  {
-  return this->fullName;
+bool operator==(const Passenger &left, const Passenger &right) {
+  if (left.fields.size() != right.fields.size())
+    return false;
+  bool result = false;
+  for (int i = 0; i < left.fields.size(); i++) {
+    if (left.fields.at(i).second != right.fields.at(i).second)
+      return false;
+  }
+  return true;
 }
 
-string Passenger::getBirthdayDate() const  {
-  return this->birthdayDate;
-}
-
-string Passenger::getHashingValue() const  {
-  return passportNumber;
-}
-
-ostream &operator<<(ostream &o, const Passenger &p) {
-  string fullName = (p.fullName.size() > 38) ? p.fullName.substr(0, 38) : p.fullName;
-  string issueDate = (p.passportDateOfIssue.size() > 18) ? p.getDateOfIssue().substr(0, 18) : p.getDateOfIssue();
-
-  o << setw(15) << left << p.getNumber() << setw(20) << left << issueDate <<
-    setw(40) << left << fullName << setw(20) << left << p.getBirthdayDate() << endl;
-  return o;
-}
-
-bool operator==(const Passenger left, const Passenger right) {
-  return (left.passportNumber == right.passportNumber) &&
-    (left.passportDateOfIssue == right.passportDateOfIssue) &&
-    (left.birthdayDate == right.birthdayDate) &&
-    (left.fullName == right.fullName);
-}
-
-bool operator!=(const Passenger left, const Passenger right) {
+bool operator!=(const Passenger &left, const Passenger &right) {
   return !(left == right);
 }

@@ -159,6 +159,14 @@ void DoublyLinkedList::display() const {
   }
 }
 
+int DoublyLinkedList::getSize() {
+  return this->size;
+}
+
+Ticket DoublyLinkedList::att(int index) {
+  return this->at(index)->data;
+}
+
 string DoublyLinkedList::getNextTicketNumber() {
   string number = to_string(this->size + 1);
   number.insert(number.begin(), 9 - number.length(), '0');

@@ -23,6 +23,10 @@ string Ticket::getTicketNumber() {
   return this->ticketNumber;
 }
 
+string Ticket::getFlightNumber() {
+  return this->flightNumber;
+}
+
 bool Ticket::flipStatus() {
   this->status = RETURNED;
   return true;
