@@ -2,9 +2,8 @@
 #include<iostream>
 #include <vector>
 
+#include "ConsoleTable.h"
 #include "Flight.h"
-
-using namespace std;
 
 class AVLTree {
 private:
@@ -16,6 +15,8 @@ private:
     int height;
   };
 
+  ConsoleTable *linkedTable;
+
   treeNode *root;
 
   void makeEmpty(treeNode *t);
@@ -24,164 +25,38 @@ private:
 
   treeNode *singleRightRotate(treeNode * &);
   treeNode *singleLeftRotate(treeNode * &);
-
   treeNode *doubleRightRotate(treeNode * &);
   treeNode *doubleLeftRotate(treeNode * &);
+  treeNode *findMin(treeNode *);
+  treeNode *findMax(treeNode *);
 
-  treeNode *findMin(treeNode *t) {
-    if (t == nullptr)
-      return nullptr;
-    else if (t->left == nullptr)
-      return t;
-    else
-      return findMin(t->left);
-  }
 
-  treeNode *findMax(treeNode *t) {
-    if (t == nullptr)
-      return nullptr;
-    else if (t->right == nullptr)
-      return t;
-    else
-      return findMax(t->right);
-  }
+    
+  treeNode *remove(Flight &, treeNode *);
 
-  treeNode *remove(const Flight &x, treeNode *t) {
-    treeNode *temp;
-    if (t == nullptr)
-      return nullptr;
-    else if (x < t->data)
-      t->left = remove(x, t->left);
-    else if (x > t->data)
-      t->right = remove(x, t->right);
-    else if (t->left && t->right) {
-      temp = findMin(t->right);
-      t->data = temp->data;
-      t->right = remove(t->data, t->right);
-    } else {
-      temp = t;
-      if (t->left == nullptr)
-        t = t->right;
-      else if (t->right == nullptr)
-        t = t->left;
-      delete temp;
-    }
+  int height(treeNode *);
+  int getBalance(treeNode *);
+  
+  void postOrder(treeNode *, std::vector<Flight> *);
+  void postOrder(treeNode *, std::string, std::vector<Flight> *);
 
-    if (t == nullptr)
-      return t;
-
-    t->height = max(height(t->left), height(t->right)) + 1;
-
-    if (height(t->left) - height(t->right) == 2) {
-      if (height(t->left->left) - height(t->left->right) == 1)
-        return singleLeftRotate(t);
-      else
-        return doubleLeftRotate(t);
-    } else if (height(t->right) - height(t->left) == 2) {
-      if (height(t->right->right) - height(t->right->left) == 1)
-        return singleRightRotate(t);
-      else
-        return doubleRightRotate(t);
-    }
-    return t;
-  }
-
-  int height(treeNode *t) {
-    return (t == nullptr ? -1 : t->height);
-  }
-
-  int getBalance(treeNode *t) {
-    if (t == nullptr)
-      return 0;
-    else
-      return height(t->left) - height(t->right);
-  }
-
-  void postOrder(treeNode *t, string pattern, vector<Flight> *v) {
-    if (t == nullptr)
-      return;
-    postOrder(t->left, pattern, v);
-    postOrder(t->right, pattern, v);
-    if (t->data.searchBoyerMoore(pattern))
-      v->push_back(t->data);
-  }
-
-  void postOrder(treeNode *t) {
-    if (t == nullptr)
-      return;
-    postOrder(t->left);
-    postOrder(t->right);
-    cout << t->data;
-  }
+  void searchByNumber(std::string, treeNode *, std::vector<Flight> *);
+  std::vector<Flight> *searchByPattern(std::string);
 
 public:
-  AVLTree() {
-    root = nullptr;
-  }
+  AVLTree(ConsoleTable *);
+  ~AVLTree();
 
-  vector<Flight> *searchByPattern(string pattern) {
-    vector<Flight> *selection = new vector<Flight>();
-    postOrder(root, pattern, selection);
-    return selection;
-  }
+  void addPostOrder(treeNode *);
 
-  bool searchByNumber(const Flight &f, treeNode *t) {
-    if (t == nullptr)
-      return false;
-    if (f > t->data)
-      return searchByNumber(f, t->right);
-    else if (f < t->data)
-      return searchByNumber(f, t->left);
-    else {
-      cout << t->data;
-      return true;
-    }
-  }
+  treeNode *removeRoot();
 
-  bool isTicketAvailible(const Flight &f, treeNode *t) {
-    if (t == nullptr)
-      return false;
-    if (f > t->data)
-      return isTicketAvailible(f, t->right);
-    else if (f < t->data)
-      return isTicketAvailible(f, t->left);
-    else {
-      return t->data.getFreeSeats() != 0;
-    }
-  }
-  bool isTicketAvailible(string number) {
-    Flight flight(number);
-    return isTicketAvailible(flight, root);
-  }
+  void insert(Flight &);
 
-  bool searchByNumber(string number) {
-    Flight flight(number);
-    return searchByNumber(flight, root);
-  }
+  void removeAll() { makeEmpty(root); }
 
-  void insert(const Flight &x) {
-    root = insert(x, root);
-  }
-
-  void remove(const Flight &x) {
-    root = remove(x, root);
-  }
-
-  bool remove(string x) {
-    Flight flight(x);
-    return (remove(flight, root) != nullptr);
-  }
-
-  void removeAll() {
-    makeEmpty(root);
-  }
-
-  void display() {
-    cout << setw(15) << left << "FLIGHT NUMBER" << setw(20) << left << "COMPANY" <<
-      setw(25) << left << "DEPARTURE" << setw(25) << left << "ARRIVAL" << setw(10) <<
-      left << "DATE" << setw(10) << left << "TIME" << setw(10) << left << "SEATS" <<
-      setw(10) << left << "FREE SEATS" << endl;
-    postOrder(root);
-  }
+  void displaySearchByNumber(std::string);
+  void displaySearchByPattern(std::string);
+  void addPostOrder();
 
 };

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <string> 
 #include <Windows.h>
 
@@ -15,6 +16,10 @@ HashTable::HashTable(int initialCapacity, ConsoleTable *linkedTable) :
   
 double HashTable::loadFactor(void) const {
     return (size / capacity);
+}
+
+int HashTable::getSize(void) const {
+  return size;
 }
 
 bool HashTable::insert(const HashEntry &entry) {
@@ -63,17 +68,16 @@ void HashTable::displaySearchByPassport(std::string passportNumber) {
 }
 
 void HashTable::displaySearchByName(std::string name) {
-  std::string temp(name);
+  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
   std::vector<HashEntry> searchResults;
-  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
   for (auto entry : data) {
     std::string currentEntry = entry.value.getField("fullName");
-    std::transform(currentEntry.begin(), currentEntry.end(), currentEntry.begin(), ::tolower);
-    if (currentEntry == name)
+    std::transform(currentEntry.begin(), currentEntry.end(), currentEntry.begin(), ::toupper);
+    if (currentEntry.find(name) != std::string::npos)
       searchResults.push_back(entry);
   }
   if (searchResults.empty()) {
-    Utils::printHeader("œ¿——¿∆»–€ œŒ «¿œ–Œ—” '" + temp + "' Õ≈ Õ¿…ƒ≈Õ");
+    Utils::printHeader("œ¿——¿∆»–€ œŒ «¿œ–Œ—” '" + name + "' Õ≈ Õ¿…ƒ≈Õ€");
   } else {
     system("cls");
     Utils::printHeader("œŒ»—  œ¿——¿∆»–Œ¬");
@@ -100,17 +104,35 @@ bool HashTable::remove(std::pair<std::string, std::string> &fieldValue) {
   }
   return flag;
 }
+
+std::vector<std::string> HashTable::getCollisions(std::string s) {
+  std::vector<std::string> collisions;
+  int goal = hashCode(s);
+  int count = 0;
+    for (int i = 0; i < 9; i++) {
+      std::string firstPart = "400" + std::to_string(i) + "0-";
+      for (int j = 0; j < 1000000; j++) {
+        std::string secondPart = std::to_string(j);
+        while (secondPart.size() != 6)
+          secondPart = "0" + secondPart;
+        if (goal == hashCode(firstPart + secondPart)) {
+          collisions.push_back(firstPart + secondPart);
+          std::cout << "FOUND " << firstPart + secondPart << std::endl;
+          count++;
+        }
+        if (count > 10)
+          return collisions;
+      }
+ 
+    std::cout << "400" << std::to_string(i) << "- out" << std::endl;
+  }
+    return collisions;
+}
  
 // Private
 
 size_t HashTable::hashCode(const std::string &element) const {
-  long long h = 17;
-  int x = 31;
-  for (const char &c : element) {
-    h += c * x;
-    x *= x;
-  }
-  return (h % capacity);
+  return (std::hash<std::string>()(element) % capacity); 
 }
 
 HashEntry *HashTable::searchByPassport(std::string passportNumber) {
@@ -124,7 +146,7 @@ int HashTable::findEmptyPosition(const std::string &id) const {
   int currentPosition = hashCode(id);
   while (data[currentPosition].status != EMPTY) {
     currentPosition = currentPosition + 2 * ++collisions - 1;
-    if (currentPosition > capacity - 1)
+    if (currentPosition > capacity)
       currentPosition -= capacity;
   }
   return currentPosition;
@@ -144,11 +166,13 @@ int HashTable::findPosition(const std::string &id) {
 }
 
 bool HashTable::remove(const HashEntry &x) {
-  int currentPosition = findPosition(x.value.getHashingValue(idFieldName)) - 1;
+  int currentPosition = findPosition(x.value.getField(idFieldName));
   if (data[currentPosition].status != OCCUPIED)
     return false;
-  if (data[currentPosition].value.getHashingValue(idFieldName) == x.value.getHashingValue(idFieldName)) {
+  if (data[currentPosition].value.getField(idFieldName) == x.value.getField(idFieldName)) {
     data[currentPosition].status = REMOVED;
+    size--;
+    linkedTable->remove(data[currentPosition].value.getField(idFieldName));
     return true;
   }
   return false;

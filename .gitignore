@@ -67,3 +67,6 @@ ConsoleApplication228/x64/Release/ConsoleApplication228.ipdb
 ConsoleApplication228/x64/Release/ConsoleApplication228.pdb
 ConsoleApplication228/ConsoleApplication228.opensdf
 ConsoleApplication228/ConsoleApplication228/x64/Debug/main.obj.enc
+*.enc
+*.obj
+*.exe

@@ -6,7 +6,6 @@
 
 class Flight {
 private:
-
   std::vector<std::pair<std::string, std::string>> fields = {
     std::make_pair("flightNumber", ""),
     std::make_pair("company", ""),
@@ -24,6 +23,7 @@ public:
   Flight(std::initializer_list<std::string> &);
   ~Flight();
   std::string getField(std::string);
+  std::vector<std::string> getVector() const;
   bool searchBoyerMoore(std::string);
 
   bool operator<(Flight &);

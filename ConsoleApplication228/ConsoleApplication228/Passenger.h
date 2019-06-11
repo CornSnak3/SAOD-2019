@@ -24,10 +24,9 @@ public:
 
   std::string getField(std::string) const;
   std::vector<std::string> getVector() const;
-  std::string getHashingValue(std::string) const;
 
   friend bool operator==(const Passenger &, const Passenger &);
-  friend bool operator!=(const Passenger &, const Passenger&);
+  friend bool operator!=(const Passenger &, const Passenger &);
 };
 
 #endif // PASSENGER_H

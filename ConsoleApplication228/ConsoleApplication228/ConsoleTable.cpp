@@ -38,6 +38,16 @@ bool ConsoleTable::addRow(std::vector<std::string> row) {
   return true;
 }
 
+void ConsoleTable::remove(std::string id) {
+  int index = 0;
+  for (auto row : rows) {
+    if (row[0] == id) {
+      removeRow(index);
+      return;
+    }
+    index++;
+  }
+}
 
 bool ConsoleTable::removeRow(unsigned int index) {
   if (index > rows.size())
@@ -45,6 +55,10 @@ bool ConsoleTable::removeRow(unsigned int index) {
 
   rows.erase(rows.begin() + index);
   return true;
+}
+
+void ConsoleTable::removeAll() {
+  rows.erase(rows.begin(), rows.end());
 }
 
 

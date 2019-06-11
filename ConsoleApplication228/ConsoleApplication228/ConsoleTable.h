@@ -28,6 +28,9 @@ public:
 
   bool addRow(std::vector<std::string> row);
   bool removeRow(unsigned int index);
+  void removeAll();
+  void remove(std::string);
+
   void updateRow(unsigned int row, unsigned int header, std::string data);
   void updateHeader(unsigned int header, std::string text);
 
@@ -64,7 +67,7 @@ private:
   TableStyle style = BasicStyle;
   const std::string SPACE_CHARACTER = " ";
   unsigned int padding = 1;
-
+  
 
   // Возвращает форматированную строку
   std::string getLine(RowType rowType) const;
@@ -78,8 +81,6 @@ private:
   friend std::ostream &operator<<(std::ostream &out, const ConsoleTable &consoleTable);
 };
 
-
-// Оператор итерации
 std::string operator*(const std::string &other, int repeats);
 
 

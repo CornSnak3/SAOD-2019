@@ -29,24 +29,20 @@ public:
   const double maxLoadFactor = 0.75;
 
   double loadFactor(void) const;
+  int getSize(void) const;
   bool isOccupied(int) const;
 
   bool insert(const HashEntry &);
   bool contains(std::pair<std::string, std::string> &);
 
-  /*void displaySearchByName(string x) {
-    for (auto &p : this->data)
-      if (p.value.getFullName() == x)
-        displaySearchByPassport(p.value.getNumber());
-      else
-        cout << "PASSENGER NOT FOUND" << endl;
-  }*/
-
   void displaySearchByPassport(std::string);
   void displaySearchByName(std::string);
 
+
   HashEntry *find(std::pair<std::string, std::string> &);
   bool remove(std::pair<std::string, std::string> &);
+  
+  std::vector<std::string> getCollisions(std::string);
 
 private:
   std::vector<HashEntry> data;
@@ -54,10 +50,10 @@ private:
   ConsoleTable *linkedTable;
 
   size_t hashCode(const std::string &) const;
+  HashEntry * searchByPassport(std::string passportNumber);
   int findEmptyPosition(const std::string &) const;
   int findPosition(const std::string &);
   bool remove(const HashEntry &);
-  HashEntry *searchByPassport(std::string);
   void rehash(void);
 };
 

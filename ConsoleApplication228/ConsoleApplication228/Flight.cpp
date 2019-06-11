@@ -6,8 +6,13 @@
 #include "Flight.h"
 
 
-bool Flight::validateNumber(std::string) const  {
-  return false;
+bool Flight::validateNumber(std::string number) const {
+  if (number[3] != '-' || number.size() != 7)
+    return false;
+  for (unsigned int i = 0; i < number.size(); i++)
+    if (!isdigit(number[i]) && number[i] != '-')
+      return false;
+  return true;
 }
 
 Flight::Flight() {}
@@ -32,6 +37,13 @@ std::string Flight::getField(std::string fieldName) {
   throw new std::invalid_argument("FIELD NOT FOUND");
 }
 
+std::vector<std::string> Flight::getVector() const {
+  std::vector<std::string> returnVector;
+  for (auto field : fields)
+    returnVector.push_back(field.second);
+  return returnVector;
+}
+
 Flight::~Flight() {}
 
 bool Flight::searchBoyerMoore(std::string substring) {
@@ -42,7 +54,8 @@ bool Flight::searchBoyerMoore(std::string substring) {
   substringLength = substring.length();
   if (stringLength < substringLength)
     return false;
-  int i, position;
+  int i;
+  int position = substring.length() - 1;
   int boyerMooreTable[128];
   for (i = 0; i < 128; i++)
     boyerMooreTable[i] = substringLength;
