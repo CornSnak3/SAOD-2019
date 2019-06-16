@@ -5,50 +5,65 @@
 
 #include "Ticket.h"
 
-using namespace std;
+Ticket::Ticket() { }
 
-Ticket::Ticket() {
-  this->ticketNumber = "999999999";
+
+Ticket::Ticket(std::string* parameters) 
+{
+  passportNumber_ = parameters[0];
+  flightNumber_   = parameters[1];
+  ticketNumber_   = parameters[2];
+  status = SOLD;
 }
 
 
-Ticket::Ticket(string *s, TicketStatus ts) {
-  this->passportNumber = s[0];
-  this->flightNumber = s[1];
-  this->ticketNumber = s[2];
-  this->status = ts;
+std::string Ticket::getTicketNumber()
+{
+  return ticketNumber_;
 }
 
-string Ticket::getTicketNumber() {
-  return this->ticketNumber;
+
+std::string Ticket::getFlightNumber()
+{
+  return flightNumber_;
 }
 
-string Ticket::getFlightNumber() {
-  return this->flightNumber;
-}
 
-bool Ticket::flipStatus() {
-  this->status = RETURNED;
+bool Ticket::flipStatus()
+{
+  status = RETURNED;
   return true;
 }
 
-bool operator<(const Ticket &l, const Ticket &r) {
-  for (int i = 0; i < l.ticketNumber.size(); i++)
-    if (l.ticketNumber[i] < r.ticketNumber[i])
+
+
+bool operator<(const Ticket& l, const Ticket& r)
+{
+  for (int i = 0; i < l.ticketNumber_.size(); i++) {
+    if (l.ticketNumber_[i] < r.ticketNumber_[i]) {
       return true;
+    }
+  }
+  
   return false;
 }
 
-bool operator==(const Ticket &r, const Ticket &l) {
-  return (r.ticketNumber == l.ticketNumber) &&
-    (r.passportNumber == l.passportNumber) &&
-    (r.flightNumber == l.flightNumber) &&
-    (r.status == l.status);
+
+bool operator==(const Ticket& r, const Ticket& l) 
+{
+  return 
+    r.ticketNumber_   == l.ticketNumber_   &&
+    r.passportNumber_ == l.passportNumber_ &&
+    r.flightNumber_   == l.flightNumber_   &&
+    r.status          == l.status;
 }
 
-ostream &operator<<(ostream &o, const Ticket &t) {
-  string temp = (t.status == SOLD) ? "SOLD" : "RETURNED";
-  cout << setw(15) << left << t.ticketNumber << setw(15) << left << t.flightNumber <<
-    setw(15) << left << t.passportNumber << setw(10) << left << temp << endl; 
+// TODO
+
+std::ostream &operator<<(std::ostream &o, const Ticket &t)
+{
+  std::string temp = (t.status == SOLD) ? "SOLD" : "RETURNED";
+  std::cout << std::setw(15) << std::left << t.ticketNumber_ << std::setw(15) << std::left << t.flightNumber_ <<
+    std::setw(15) << std::left << t.passportNumber_ << std::setw(10) << std::left << temp << std::endl; 
   return o;
 }

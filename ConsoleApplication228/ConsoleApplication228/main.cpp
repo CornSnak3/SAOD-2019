@@ -21,17 +21,6 @@
 
 using namespace std;
 
-ConsoleTable *passengersTable = new ConsoleTable{
-  "Номер паспорта", "Дата выдачи", "ФИО", "Дата рождения" };
-
-ConsoleTable *flightsTable = new ConsoleTable{
-  "Номер рейса", "Авиакомпания", "Отправление", "Прибытие",
-  "Время вылета", "Всего мест", "Свободно мест" };
-
-HashTable *passengers = new HashTable(32, passengersTable);
-AVLTree *flights = new AVLTree(flightsTable);
-DoublyLinkedList *tickets = new DoublyLinkedList();
-
 
 
 int passengerTotal = 0;
@@ -86,6 +75,25 @@ int main(int argc, char *argv[]) {
   setlocale(LC_ALL, "Russian");
   SetConsoleCP(1251);
   SetConsoleOutputCP(1251);
+  
+  // Структуры пассажиров
+  ConsoleTable *passengersTable = new ConsoleTable{
+    "Номер паспорта", "Дата выдачи", "ФИО", "Дата рождения" };
+
+  HashTable *passengers = new HashTable(32, passengersTable, 0.75,
+                                        static_cast<string> ("passportName"));
+
+  // Структуры авиарейсов
+  ConsoleTable *flightsTable = new ConsoleTable{
+    "Номер рейса", "Авиакомпания", "Отправление", "Прибытие",
+    "Время вылета", "Всего мест", "Свободно мест" };
+
+  AVLTree *flights = new AVLTree(flightsTable);
+
+  // Структуры билетов
+
+  DoublyLinkedList *tickets = new DoublyLinkedList();\
+
 
   int menu = 1;
   while (menu) {

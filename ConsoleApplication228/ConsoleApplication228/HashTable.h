@@ -16,9 +16,9 @@ enum DataStatus {
 class HashEntry {
 
 public: 
-  HashEntry(void)       { }
-  HashEntry(Passenger&) { }
-  ~HashEntry()          { }
+  HashEntry(void);
+  HashEntry(Passenger&);
+  ~HashEntry();
 
   Passenger  getValue  (void);
   DataStatus getStatus (void);
@@ -38,7 +38,7 @@ class HashTable {
 
 public:
 
-  HashTable(int, ConsoleTable*, int, std::string&);
+  HashTable(int, ConsoleTable*, double, std::string&);
   
   double     getLoadFactor (void) const noexcept;
   int        getSize       (void) const noexcept;
@@ -46,7 +46,7 @@ public:
 
   bool       isOccupied    (int);
   bool       contains      (std::pair<std::string, std::string>&);
-  int        insert        (const HashEntry&);
+  int        insert        (HashEntry&);
   bool       remove        (std::pair<std::string, std::string>&);
 
   void       displaySearchByPassport (std::string&) const;
@@ -68,7 +68,7 @@ private:
   size_t     hashCode          (const std::string&) const;
   int        findEmptyPosition (const std::string&);
   int        findPosition      (const std::string&);
-  bool       remove            (const HashEntry&);
+  bool       remove            (HashEntry&);
   void       rehash            (void);
 
   HashEntry* searchByPassport(std::string passportNumber);

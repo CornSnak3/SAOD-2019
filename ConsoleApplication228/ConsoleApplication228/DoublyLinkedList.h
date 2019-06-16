@@ -1,42 +1,49 @@
-#ifndef DOUBLYLINKEDLIST_H
-#define DOUBLYLINKEDLIST_H
+#ifndef SAOD_DOUBLYLINKEDLIST_H
+#define SAOD_DOUBLYLINKEDLIST_H
 
 #include <iostream>
 #include <string>
 
 #include "Ticket.h"
 
+
 class DoublyLinkedList {
-private:
-  int size;
 
-  typedef struct Node {
-    Ticket data;
-    Node* next;
-    Node* prev;
-  } *nodePtr;
+public:
 
-  nodePtr head;
-  nodePtr tail;
-
-  nodePtr createNode(Ticket);
-  nodePtr at(int);
-  void emptyList();
-  void removeNode(nodePtr);
-  nodePtr findMin() const;
-
-public:  
-  DoublyLinkedList();
+  DoublyLinkedList ();
   ~DoublyLinkedList();
-  void pushBack(const Ticket &);
-  void remove(int);
-  void remove(Ticket);
-  bool returnTicket(std::string);
-  void insertionSort();
-  void display() const;
-  int getSize();
-  Ticket att(int);
-  std::string getNextTicketNumber();
+
+  void    pushBack      (Ticket &);
+  void    remove        (int);
+  void    remove        (Ticket&);
+  bool    returnTicket  (std::string);
+  void    insertionSort (void);
+
+  int         getSize             (void);
+  std::string getNextTicketNumber (void);
+
+
+private:
+
+  struct Node {
+    Ticket data;
+    Node*  next;
+    Node*  prev;
+  };
+
+
+  int   size_;
+  Node* head_;
+  Node* tail_;
+
+
+  Node* at         (int);
+  Node* createNode (Ticket&);
+  Node* findMin    (void) const;
+  void  emptyList  (void);
+  void  removeNode (Node*);
+
 };
 
-#endif // DOUBLYLINKEDLIST_H
+#endif // SAOD_DOUBLYLINKEDLIST_H

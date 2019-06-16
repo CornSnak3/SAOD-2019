@@ -1,174 +1,209 @@
+#include <exception>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "DoublyLinkedList.h"
 #include "Ticket.h"
 
-using namespace std;
-
-struct listOutOfBoundsException : public exception {
+struct listOutOfBoundsException : public std::exception
+{
   const char * what() const throw () {
     return "Out of bounds";
   }
 };
 
-DoublyLinkedList::nodePtr DoublyLinkedList::findMin() const {
-  nodePtr node = this->head;
-  nodePtr retNode;
+// Public DoublyLinkedList
+
+DoublyLinkedList::DoublyLinkedList() : 
+  size_(0), head_(nullptr), tail_(nullptr) { }
+
+
+DoublyLinkedList::~DoublyLinkedList()
+{
+  this->emptyList();
+}
+
+
+
+void DoublyLinkedList::pushBack(Ticket& ticket)
+{
+  Node* newNode = createNode(ticket);
+
+  if (head_ == nullptr) {
+    head_ = newNode;
+  }
+  else {
+    if (tail_ == nullptr) {
+      tail_       = newNode;
+      head_->next = tail_;
+      tail_->prev = head_;
+    }
+    else {
+      Node* prevTail = tail_;
+      newNode->prev  = prevTail;
+      prevTail->next = newNode;
+      tail_ = newNode;
+    }
+  }
+
+  size_++;
+}
+
+
+void DoublyLinkedList::remove(int index)
+{
+  Node* nodeTodelete = nullptr;
+
+  try {
+    nodeTodelete = at(index);
+    removeNode(nodeTodelete);
+  }
+  catch (listOutOfBoundsException &e) {
+    std::cout << e.what() << index << std::endl;
+  }
+}
+
+
+void DoublyLinkedList::remove(Ticket& data)
+{
+  Node* currentNode = head_;
+
+  while (currentNode != nullptr) {
+    if (data == currentNode->data) {
+      removeNode(currentNode);
+      return;
+    }
+
+    currentNode = currentNode->next;
+  }
+}
+
+// TODO
+bool DoublyLinkedList::returnTicket(std::string passportNumber)
+{
+  for (int i = 0; i < this->size_; i++) {
+    if (this->at(i)->data.getTicketNumber() == passportNumber) {
+      return this->at(i)->data.flipStatus();
+    }
+  }
+  return false;
+}
+
+
+void DoublyLinkedList::insertionSort(void)
+{
+  for (int i = 0; i < this->size_; i++) {
+    Node* newHead = findMin();
+    remove(newHead->data);
+
+    head_->prev = newHead;
+    newHead->prev = nullptr;
+    newHead->next = head_;
+    head_ = newHead;
+  }
+}
+
+
+DoublyLinkedList::Node* DoublyLinkedList::findMin() const
+{
+  Node*  node = head_;
+  Node*  retNode;
   Ticket min;
+
   while (node != nullptr) {
     if (node->data < min) {
-      min = node->data;
+      min     = node->data;
       retNode = node;
     }
+
     node = node->next;
   }
   return retNode;
 }
 
-void DoublyLinkedList::insertionSort() {
-  for (int i = 0; i < this->size; i++) {
-    nodePtr newHead = findMin();
-    remove(newHead->data);
-    this->head->prev = newHead;
-    newHead->prev = nullptr;
-    newHead->next = this->head;
-    this->head = newHead;
-  }
+
+
+int DoublyLinkedList::getSize(void)
+{
+  return this->size_;
 }
 
 
- DoublyLinkedList::nodePtr DoublyLinkedList::createNode(Ticket data) {
-  nodePtr newNode = new Node;
+std::string DoublyLinkedList::getNextTicketNumber(void)
+{
+  std::string number = std::to_string(size_ + 1);
+  number.insert(number.begin(), 9 - number.length(), '0');
+  return number;
+}
+
+
+
+//Private DoublyLinkedList
+
+DoublyLinkedList::Node* DoublyLinkedList::at(int index) 
+{
+  if (index > size_)
+    throw new listOutOfBoundsException();
+  
+  Node* currentNode = head_;
+  for (int i = 0; i < index; i++) {
+    currentNode = currentNode->next;
+  }
+
+  return currentNode;
+}
+
+
+ DoublyLinkedList::Node* DoublyLinkedList::createNode(Ticket& data)
+{
+  Node* newNode = new Node;
   newNode->data = data;
   newNode->next = nullptr;
   newNode->prev = nullptr;
   return newNode;
 }
+ 
 
-DoublyLinkedList::nodePtr DoublyLinkedList::at(int index) {
-  if (this->size <= index)
-    throw listOutOfBoundsException();
+void DoublyLinkedList::emptyList(void)
+{
+  Node* currentNode = head_;
 
-  int counter = 0;
-  nodePtr node = this->head;
-
-  while (counter != index && node != nullptr) {
-    node = node->next;
-    ++counter;
-  }
-
-  return node;
-}
-
-void DoublyLinkedList::emptyList() {
-  nodePtr currentNode = this->head;
   while (currentNode != nullptr) {
-    nodePtr next = currentNode->next;
+    Node* next = currentNode->next;
     delete currentNode;
     currentNode = next;
   }
 }
 
-void DoublyLinkedList::removeNode(nodePtr nodeToDelete) {
-  nodePtr prevNode = nodeToDelete->prev;
-  nodePtr nextNode = nodeToDelete->next;
+
+void DoublyLinkedList::removeNode(Node* nodeToDelete) 
+{
+  Node* prevNode = nodeToDelete->prev;
+  Node* nextNode = nodeToDelete->next;
 
   if (prevNode == nullptr) {
-    this->head = nullptr;
-    this->head = nextNode;
-    if (this->head != nullptr)
-      this->head->prev = nullptr;
+    head_ = nullptr;
+    head_ = nextNode;
+
+    if (head_ != nullptr) {
+      head_->prev = nullptr;
+    }
 
   } else if (nextNode == nullptr) {
-    this->tail = nullptr;
-    this->tail = prevNode;
-    if (this->tail != nullptr)
-      this->tail->next = nullptr;
+    tail_ = nullptr;
+    tail_ = prevNode;
+
+    if (this->tail_ != nullptr) {
+      tail_->next = nullptr;
+    }
   } else  {
     nextNode->prev = prevNode;
     prevNode->next = nextNode;
   }
+
   delete nodeToDelete;
-  --this->size;
+  size_--;
 }
 
-DoublyLinkedList::DoublyLinkedList() : size(0) {
-  this->head = nullptr;
-  this->tail = nullptr;
-}
 
-DoublyLinkedList::~DoublyLinkedList() {
-  this->emptyList();
-}
-
-void DoublyLinkedList::pushBack(const Ticket &data) {
-  nodePtr newNode = createNode(data);
-  if (this->head == nullptr) {
-    this->head = newNode;
-  } else {
-    if (this->tail == nullptr) {
-      this->tail = newNode;
-      this->head->next = this->tail;
-      this->tail->prev = this->head;
-    } else {
-      nodePtr prevTail = this->tail;
-      newNode->prev = prevTail;
-      prevTail->next = newNode;
-      this->tail = newNode;
-    }
-  }
-  ++this->size;
-}
-
-void DoublyLinkedList::remove(int index) {
-  nodePtr nodeTodelete = nullptr;
-  try {
-    nodeTodelete = at(index);
-    removeNode(nodeTodelete);
-  } catch (listOutOfBoundsException &e) {
-    cout << e.what() << index << endl;
-  }
-}
-
-void DoublyLinkedList::remove(Ticket data) {
-  nodePtr currentNode = this->head;
-  while (currentNode != nullptr) {
-    if (data == currentNode->data)
-      removeNode(currentNode);
-
-    currentNode = currentNode->next;
-  }
-}
-
-bool DoublyLinkedList::returnTicket(string s) {
-  for (int i = 0; i < this->size; i++) {
-    if (this->at(i)->data.getTicketNumber() == s)
-      return this->at(i)->data.flipStatus();
-  }
-  return false;
-}
-
-void DoublyLinkedList::display() const {
-  cout << setw(15) << left << "TICKET #" << setw(15) 
-    << "FLIGHT" << setw(15) << "PASSPORT" << endl;
-  nodePtr currentNode = this->head;
-  while (currentNode != nullptr) {
-    cout << currentNode->data;
-    currentNode = currentNode->next;
-  }
-}
-
-int DoublyLinkedList::getSize() {
-  return this->size;
-}
-
-Ticket DoublyLinkedList::att(int index) {
-  return this->at(index)->data;
-}
-
-string DoublyLinkedList::getNextTicketNumber() {
-  string number = to_string(this->size + 1);
-  number.insert(number.begin(), 9 - number.length(), '0');
-  return number;
-}

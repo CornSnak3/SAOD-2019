@@ -50,7 +50,7 @@ void HashEntry::setStatus(const DataStatus& status)
 
 HashTable::HashTable
    (
-      int initialCapacity, ConsoleTable *linkedTable, int maxLoadFactor = 0.75, 
+      int initialCapacity, ConsoleTable *linkedTable, double maxLoadFactor = 0.75, 
       std::string& idFieldName = static_cast<std::string> ("passportNumber")
     ) :
   capacity_(initialCapacity), linkedTable_(linkedTable), 
@@ -95,7 +95,7 @@ bool HashTable::contains(std::pair<std::string, std::string> &entry)
 }
 
 
-int HashTable::insert(const HashEntry& entryToInsert)
+int HashTable::insert(HashEntry& entryToInsert)
 {
   int position = 
     findEmptyPosition(entryToInsert.getValue.getField(ID_FIELD_NAME));
@@ -138,7 +138,7 @@ void HashTable::displaySearchByPassport(std::string& passportNumber) const
   std::pair<std::string, std::string> entry = 
     std::make_pair("passportNumber", passportNumber);
 
-  HashEntry *foundEntry = find(entry);
+  HashEntry *foundEntry = &(find(entry));
 
   if (foundEntry == nullptr) {
     std::cout << "Пассажир с номером паспорта '" << passportNumber << "' не найден" << std::endl;
@@ -264,7 +264,7 @@ int HashTable::findPosition(const std::string& id)
 }
 
 
-bool HashTable::remove(const HashEntry& entryToRemove)
+bool HashTable::remove(HashEntry& entryToRemove)
 {
   int position =
     findPosition(entryToRemove.getValue().getField(ID_FIELD_NAME));
