@@ -1,62 +1,63 @@
-#include<algorithm>
-#include<iostream>
+#ifndef SAOD_AVLTREE_H
+#define SAOD_AVLTREE_H
+
+#include <algorithm>
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include "ConsoleTable.h"
 #include "Flight.h"
 
 class AVLTree {
-private:
 
-  struct treeNode {
+public:
+
+  struct TreeNode {
     Flight data;
-    treeNode *left;
-    treeNode *right;
+    TreeNode *left;
+    TreeNode *right;
     int height;
   };
 
-  ConsoleTable *linkedTable;
+  AVLTree  (ConsoleTable*);
+  ~AVLTree (void);
 
-  treeNode *root;
+  void      addPostOrder (void);
+  void      addPostOrder (TreeNode*);
+  TreeNode* removeRoot   (void);
+  void      insert       (Flight&);
+  void      removeAll    (void);
 
-  void makeEmpty(treeNode *t);
-
-  treeNode *insert(Flight &, treeNode *);
-
-  treeNode *singleRightRotate(treeNode * &);
-  treeNode *singleLeftRotate(treeNode * &);
-  treeNode *doubleRightRotate(treeNode * &);
-  treeNode *doubleLeftRotate(treeNode * &);
-  treeNode *findMin(treeNode *);
-  treeNode *findMax(treeNode *);
+  void displaySearchByNumber  (std::string&);
+  void displaySearchByPattern (std::string&);
 
 
-    
-  treeNode *remove(Flight &, treeNode *);
+private:
 
-  int height(treeNode *);
-  int getBalance(treeNode *);
+  ConsoleTable* linkedTable_;
+
+  TreeNode* root_;
+
+  void      makeEmpty         (TreeNode*);
+  TreeNode* insert            (Flight&, TreeNode*);
+  TreeNode* singleRightRotate (TreeNode*);
+  TreeNode* singleLeftRotate  (TreeNode*);
+  TreeNode* doubleRightRotate (TreeNode*);
+  TreeNode* doubleLeftRotate  (TreeNode*);
+  TreeNode* findMin           (TreeNode*);
+  TreeNode* findMax           (TreeNode*);
+  TreeNode* remove            (Flight&, TreeNode*);
+  int       height            (TreeNode*);
+  int       getBalance        (TreeNode*);
   
-  void postOrder(treeNode *, std::vector<Flight> *);
-  void postOrder(treeNode *, std::string, std::vector<Flight> *);
+  void      postOrder         (TreeNode*, std::vector<Flight>*);
+  void      postOrder         (TreeNode*, std::string, std::vector<Flight>*);
 
-  void searchByNumber(std::string, treeNode *, std::vector<Flight> *);
-  std::vector<Flight> *searchByPattern(std::string);
 
-public:
-  AVLTree(ConsoleTable *);
-  ~AVLTree();
-
-  void addPostOrder(treeNode *);
-
-  treeNode *removeRoot();
-
-  void insert(Flight &);
-
-  void removeAll() { makeEmpty(root); }
-
-  void displaySearchByNumber(std::string);
-  void displaySearchByPattern(std::string);
-  void addPostOrder();
+  void                 searchByNumber  (std::string&, TreeNode*, std::vector<Flight>*);
+  std::vector<Flight>* searchByPattern (std::string&);
 
 };
+
+#endif // SAOD_AVLTREE_H
