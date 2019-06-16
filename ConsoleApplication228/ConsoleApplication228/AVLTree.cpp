@@ -89,8 +89,6 @@ void AVLTree::displaySearchByNumber(std::string& number)
     std::cout << *tempTable;
     delete tempTable;
   }
-
-  delete searchResults;
 }
 
 
@@ -113,8 +111,6 @@ void AVLTree::displaySearchByPattern(std::string& pattern)
 
   std::cout << *tempTable;
   delete tempTable;
-
-  delete searchResults;
 }
 
 

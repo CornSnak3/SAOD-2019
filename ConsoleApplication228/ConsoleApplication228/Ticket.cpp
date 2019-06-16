@@ -17,6 +17,10 @@ Ticket::Ticket(std::string* parameters)
 }
 
 
+Ticket::~Ticket(void) { }
+
+
+
 std::string Ticket::getTicketNumber()
 {
   return ticketNumber_;

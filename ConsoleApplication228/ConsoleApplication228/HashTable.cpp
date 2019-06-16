@@ -91,18 +91,18 @@ bool HashTable::isOccupied(int position)
 bool HashTable::contains(std::pair<std::string, std::string> &entry)
 {
   HashEntry *found = find(entry);
-  return (found->getValue.getField(ID_FIELD_NAME) == entry.second);
+  return (found->getValue().getField(ID_FIELD_NAME) == entry.second);
 }
 
 
 int HashTable::insert(HashEntry& entryToInsert)
 {
   int position = 
-    findEmptyPosition(entryToInsert.getValue.getField(ID_FIELD_NAME));
+    findEmptyPosition(entryToInsert.getValue().getField(ID_FIELD_NAME));
 
   HashEntry* foundEntry = &(data_.at(position));
 
-  if (foundEntry->getStatus != REMOVED) {
+  if (foundEntry->getStatus() != REMOVED) {
     ++size_;
   }
 
@@ -113,7 +113,6 @@ int HashTable::insert(HashEntry& entryToInsert)
     rehash();
   }
 
-  delete foundEntry;
   return position;
 }
 
@@ -133,12 +132,12 @@ bool HashTable::remove(std::pair<std::string, std::string> &fieldValue)
 
 
 
-void HashTable::displaySearchByPassport(std::string& passportNumber) const
+void HashTable::displaySearchByPassport(std::string& passportNumber)
 {
   std::pair<std::string, std::string> entry = 
     std::make_pair("passportNumber", passportNumber);
 
-  HashEntry *foundEntry = &(find(entry));
+  HashEntry *foundEntry = find(entry);
 
   if (foundEntry == nullptr) {
     std::cout << "Пассажир с номером паспорта '" << passportNumber << "' не найден" << std::endl;
@@ -157,7 +156,6 @@ void HashTable::displaySearchByPassport(std::string& passportNumber) const
 
     delete tempTable;
   }
-  delete foundEntry;
 }
 
 
@@ -272,7 +270,6 @@ bool HashTable::remove(HashEntry& entryToRemove)
   HashEntry* foundEntry = &(data_.at(position));
 
   if (foundEntry->getStatus() != OCCUPIED) {
-    delete foundEntry;
     return false;
   }
 
@@ -283,11 +280,9 @@ bool HashTable::remove(HashEntry& entryToRemove)
     size_--;
     linkedTable_->remove(foundEntry->getValue().getField(ID_FIELD_NAME));
 
-    delete foundEntry;
     return true;
   }
 
-  delete foundEntry;
   return false;
 }
 

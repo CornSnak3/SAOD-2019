@@ -63,7 +63,7 @@ private:
   };
 
 
-  const TableStyle BASIC_STYLE     = { "—", "|", { "|", "+", "|" }, { "|", "+", "|" }, { "|", "+", "|" } };
+  const TableStyle BASIC_STYLE     = { "-", "|", { "+", "+", "+" }, { "+", "+", "+" }, { "+", "+", "+" } };
   const TableStyle INVISIBLE_STYLE = { " ", " ", { " ", " ", " " }, { " ", " ", " " }, { " ", " ", " " } };
 
   TableStyle style_ = BASIC_STYLE;

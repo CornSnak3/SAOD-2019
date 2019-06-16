@@ -14,7 +14,7 @@ Passenger::Passenger(std::initializer_list<std::string>& initList)
     throw new std::invalid_argument("INCORRECT PASSENGER INITIALIZATION");
   }
   int count = 0;
-  for (auto s : initList) {
+  for (auto& s : initList) {
     if (count == 0) {
       if (!validatePassportNo(s)) {
         throw new std::invalid_argument("INVALID PASSPORT NUMBER");
@@ -30,6 +30,8 @@ Passenger::Passenger(std::initializer_list<std::string>& initList)
 Passenger::Passenger(Passenger* p) 
 {
   int count = 0;
+  if (p == nullptr)
+    return;
   for (auto s : p->fields) {
     fields.at(count++).second = s.second;
   }
@@ -49,7 +51,8 @@ bool Passenger::validatePassportNo(std::string passportNo) const
     return false;
   }
 
-  passportNo.erase(passportNo.begin() + 4);
+  passportNo.erase(passportNo.begin() + 4, passportNo.begin() + 5);
+  passportNoSize--;
 
   for (int i = 0; i < passportNoSize; i++) {
     if (!isdigit(passportNo[i])) {

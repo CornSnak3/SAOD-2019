@@ -16,8 +16,8 @@ enum DataStatus {
 class HashEntry {
 
 public: 
-  HashEntry(void);
-  HashEntry(Passenger&);
+  HashEntry (void);
+  HashEntry (Passenger&);
   ~HashEntry();
 
   Passenger  getValue  (void);
@@ -49,7 +49,7 @@ public:
   int        insert        (HashEntry&);
   bool       remove        (std::pair<std::string, std::string>&);
 
-  void       displaySearchByPassport (std::string&) const;
+  void       displaySearchByPassport (std::string&);
   void       displaySearchByName     (std::string&) const;
 
   HashEntry* find  (std::pair<std::string, std::string>&);

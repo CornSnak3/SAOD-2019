@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -57,47 +58,48 @@ std::string Flight::getField(std::string fieldName)
 }
 
 
-
 bool Flight::searchBoyerMoore(std::string substring)
 {
-  int         stringLength, substringLength;
-  std::string string;
-
-  string          = getField("departureAirport");
-  stringLength    = string.length();
-  substringLength = substring.length();
+  std::string string = getField("departureAirport");
+  
+  int res             = -1;
+  int stringLength    = string.length();
+  int substringLength = substring.length();
 
   if (stringLength < substringLength) {
     return false;
   }
 
-  int i, position;
-  int boyerMooreTable[128];
+  int i;
+  int position = substringLength - 1;
+  int BMT[256];
 
-  for (i = 0; i < 128; i++) {
-    boyerMooreTable[i] = substringLength;
+  for (i = 0; i < 256; i++) {
+    BMT[i] = substringLength;
   }
 
   for (i = substringLength - 1; i >= 0; i--) {
-    if (boyerMooreTable[substring[i]] == substringLength) {
-      boyerMooreTable[substring[i]] = substringLength - i - 1;
+    if (BMT[static_cast<int>(substring[i] + 128)] == substringLength) {
+      BMT[static_cast<int>(substring[i] + 128)] = substringLength - i - 1;
     }
   }
 
-  position = substringLength - 1;
-
   while (position < stringLength) {
     if (substring[substringLength - 1] != string[position]) {
-      position += boyerMooreTable[string[position]];
+      position = position + BMT[static_cast<int> (string[position] + 128)];
     }
     else {
       for (i = substringLength - 2; i >= 0; i--) {
-        if (substring[i] != string[position - substringLength + i + 1]) {
-          position += boyerMooreTable[string[position - substringLength + i + 1]] - 1;
+        char characterToCheck = string[position - substringLength + i + 1];
+        if (substring[i] != characterToCheck) {
+          position += BMT[static_cast<int>(characterToCheck + 128)] - 1;
           break;
         }
-        else if (i == 0) {
-          return true;
+        else {
+          if (i == 0)
+          {
+            return true;
+          }
         }
       }
     }

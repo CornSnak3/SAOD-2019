@@ -7,6 +7,14 @@
 
 class Passenger {
 
+private:
+  std::vector<std::pair<std::string, std::string>> fields = {
+    std::make_pair("passportNumber",      ""),
+    std::make_pair("passportDateOfIssue", ""),
+    std::make_pair("fullName",            ""),
+    std::make_pair("birthdayDate",        "")
+  };
+
 public:
   Passenger (void);
   Passenger (std::initializer_list<std::string>&);
@@ -21,13 +29,7 @@ public:
   friend bool operator==(const Passenger&, const Passenger&);
   friend bool operator!=(const Passenger&, const Passenger&);
 
-private:
-  std::vector<std::pair<std::string, std::string>> fields = {
-    std::make_pair("passportNumber",      ""),
-    std::make_pair("passportDateOfIssue", ""),
-    std::make_pair("fullName",            ""),
-    std::make_pair("birthdayDate",        "")
-  };
+
 
 };
 
