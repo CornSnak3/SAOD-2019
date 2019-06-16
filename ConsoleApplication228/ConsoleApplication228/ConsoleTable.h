@@ -1,5 +1,5 @@
-#ifndef CONSOLETABLE_CONSOLETABLE_H
-#define CONSOLETABLE_CONSOLETABLE_H
+#ifndef SAOD_CONSOLETABLE_H
+#define SAOD_CONSOLETABLE_H
 
 #include <string>
 #include <vector>
@@ -9,6 +9,7 @@
 
 
 class ConsoleTable {
+
 public:
 
   typedef std::vector<std::string> Headers;
@@ -40,11 +41,12 @@ public:
   /// Оператор для removeRow()
   ConsoleTable &operator-=(uint32_t rowIndex);
 
+
 private:
 
-  Headers headers;
-  Rows rows;
-  Widths widths;
+  Headers headers_;
+  Rows    rows_;
+  Widths  widths_;
 
   struct RowType {
     std::string left;
@@ -55,18 +57,18 @@ private:
   struct TableStyle {
     std::string horizontal;
     std::string vertical;
-    RowType top;
-    RowType middle;
-    RowType bottom;
+    RowType     top;
+    RowType     middle;
+    RowType     bottom;
   };
 
 
-  TableStyle BasicStyle = { "-", "|", { "+", "+", "+" }, { "+", "+", "+" }, { "+", "+", "+" } };
-  TableStyle InvisibleStyle = { " ", " ", { " ", " ", " " }, { " ", " ", " " }, { " ", " ", " " } };
+  const TableStyle BASIC_STYLE     = { "—", "|", { "|", "+", "|" }, { "|", "+", "|" }, { "|", "+", "|" } };
+  const TableStyle INVISIBLE_STYLE = { " ", " ", { " ", " ", " " }, { " ", " ", " " }, { " ", " ", " " } };
 
-  TableStyle style = BasicStyle;
+  TableStyle style_ = BASIC_STYLE;
   const std::string SPACE_CHARACTER = " ";
-  unsigned int padding = 1;
+  unsigned int padding_ = 1;
   
 
   // Возвращает форматированную строку
@@ -84,4 +86,4 @@ private:
 std::string operator*(const std::string &other, int repeats);
 
 
-#endif //CONSOLETABLE_CONSOLETABLE_H
+#endif //SAOD_CONSOLETABLE_H

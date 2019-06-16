@@ -18,14 +18,14 @@
 const std::string helpString1 = "ббепу/бмхг(ярпекйх)";
 const std::string helpString2 = "бшунд(ESC) | ббнд(ENTER)";
 
-void Utils::printHeader(std::string header) {
+void utils::printHeader(std::string header) {
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   SetConsoleTextAttribute(hConsole, 16 * CONSOLE_COLOR_BLUE + CONSOLE_COLOR_WHITE);
   std::cout << header << std::endl;
   SetConsoleTextAttribute(hConsole, 16 * CONSOLE_COLOR_BLACK + CONSOLE_COLOR_WHITE);
 }
 
-int Utils::executeMenu(const std::vector<std::string> &menu) {
+int utils::executeMenu(const std::vector<std::string> &menu) {
   char keyPressed;
   int currentPosition = 0;
   while (true) {
@@ -51,7 +51,7 @@ int Utils::executeMenu(const std::vector<std::string> &menu) {
   return 0;
 }
 
-void Utils::drawMenu(const std::vector<std::string> &menu,
+void utils::drawMenu(const std::vector<std::string> &menu,
                      int highlintedMenuItem) {
   system("cls");
   size_t maxLength = helpString2.size();
@@ -75,7 +75,7 @@ void Utils::drawMenu(const std::vector<std::string> &menu,
 
 }
 
-void Utils::printMenuItem(std::string menuItem, int length,
+void utils::printMenuItem(std::string menuItem, int length,
                           int backgroundColor, int foregroundColor) {
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   if (menuItem.size() % 2 == 1)
@@ -87,7 +87,7 @@ void Utils::printMenuItem(std::string menuItem, int length,
   SetConsoleTextAttribute(hConsole, 16 * 0 + 7);
 }
 
-void Utils::getInput(std::string fieldName, std::string &objectToWrite, int maxLength) {
+void utils::getInput(std::string fieldName, std::string &objectToWrite, int maxLength) {
   std::string paddingString(maxLength - fieldName.size(), ' ');
   std::cout << fieldName << paddingString << ">> ";
   getline(std::cin, objectToWrite);

@@ -5,86 +5,143 @@
 
 #include "Flight.h"
 
+//Public Flight
 
-bool Flight::validateNumber(std::string number) const {
-  if (number[3] != '-' || number.size() != 7)
-    return false;
-  for (unsigned int i = 0; i < number.size(); i++)
-    if (!isdigit(number[i]) && number[i] != '-')
-      return false;
-  return true;
-}
+Flight::Flight(void) { }
 
-Flight::Flight() {}
 
-Flight::Flight(std::initializer_list<std::string> &initList) {
-  if ((initList.size() != fields.size()))
-    throw new std::invalid_argument("INCORRECT FLIGHT INITIALIZATION");
+Flight::Flight(std::initializer_list<std::string>& initializationList)
+{
+  if ((initializationList.size() != fields.size())) {
+    throw new std::invalid_argument("Incorrect Flight initialization");
+  }
+
   int count = 0;
-  for (auto s : initList) {
-    if (count == 0)
-      if (!validateNumber(s))
-        throw new std::invalid_argument("INVALID FLIGHT NUMBER");
-    fields.at(count++).second = s;
+  for (auto s : initializationList) {
+    if (count == 0) {
+      if (!validateNumber(s)) {
+        throw new std::invalid_argument("Invalid flight number");
+      }
+    }
+
+    fields.at(count).second = s;
+    count++;
   }
 }
 
-std::string Flight::getField(std::string fieldName) {
-  for (auto field : fields) {
-    if (field.first == fieldName)
-      return field.second;
-  }
-  throw new std::invalid_argument("FIELD NOT FOUND");
-}
-
-std::vector<std::string> Flight::getVector() const {
-  std::vector<std::string> returnVector;
-  for (auto field : fields)
-    returnVector.push_back(field.second);
-  return returnVector;
-}
 
 Flight::~Flight() {}
 
-bool Flight::searchBoyerMoore(std::string substring) {
-  std::string string = getField("departureAirport");
-  int stringLength, substringLength;
-  int res = -1;
-  stringLength = string.length();
+
+
+std::vector<std::string> Flight::getVector() const
+{
+  std::vector<std::string> returnVector;
+  for (auto field : fields) {
+    returnVector.push_back(field.second);
+  }
+
+  return returnVector;
+}
+
+
+std::string Flight::getField(std::string fieldName)
+{
+  for (auto& field : fields) {
+    if (field.first == fieldName) {
+      return field.second;
+    }
+  }
+
+  throw new std::invalid_argument("Field not found");
+}
+
+
+
+bool Flight::searchBoyerMoore(std::string substring)
+{
+  int         stringLength, substringLength;
+  std::string string;
+
+  string          = getField("departureAirport");
+  stringLength    = string.length();
   substringLength = substring.length();
-  if (stringLength < substringLength)
+
+  if (stringLength < substringLength) {
     return false;
-  int i;
-  int position = substring.length() - 1;
+  }
+
+  int i, position;
   int boyerMooreTable[128];
-  for (i = 0; i < 128; i++)
+
+  for (i = 0; i < 128; i++) {
     boyerMooreTable[i] = substringLength;
-  for (i = substringLength - 1; i >= 0; i--)
-    if (boyerMooreTable[substring[i]] == substringLength)
+  }
+
+  for (i = substringLength - 1; i >= 0; i--) {
+    if (boyerMooreTable[substring[i]] == substringLength) {
       boyerMooreTable[substring[i]] = substringLength - i - 1;
+    }
+  }
+
   position = substringLength - 1;
-  while (position < stringLength)
-    if (substring[substringLength - 1] != string[position])
-      position = position + boyerMooreTable[string[position]];
-    else
+
+  while (position < stringLength) {
+    if (substring[substringLength - 1] != string[position]) {
+      position += boyerMooreTable[string[position]];
+    }
+    else {
       for (i = substringLength - 2; i >= 0; i--) {
         if (substring[i] != string[position - substringLength + i + 1]) {
           position += boyerMooreTable[string[position - substringLength + i + 1]] - 1;
           break;
-        } else if (i == 0)
-            return true;
+        }
+        else if (i == 0) {
+          return true;
+        }
       }
+    }
+  }
+
   return false;
 }
 
-bool Flight::operator<(Flight &rvalue) {
+
+
+bool Flight::operator<(Flight &rvalue)
+{
   return (this->getField("flightNumber") < rvalue.getField("flightNumber"));
 }
 
-bool Flight::operator>(Flight &rvalue) {
+
+bool Flight::operator>(Flight &rvalue)
+{
   return (this->getField("flightNumber") > rvalue.getField("flightNumber"));
 }
 
-bool Flight::operator==(Flight &rvalue) {
+
+bool Flight::operator==(Flight &rvalue)
+{
   return (this->getField("flightNumber") == rvalue.getField("flightNumber"));
+}
+
+
+
+// Private Flight
+
+bool Flight::validateNumber(std::string passpornNo) const
+{
+  if (passpornNo[3] != '-' || passpornNo.size() != 7) {
+    return false;
+  }
+
+  passpornNo.erase(passpornNo.begin() + 3);
+
+  for (int i = 0; i < passpornNo.size(); i++) {
+    if (!isdigit(passpornNo[i])) {
+      return false;
+    }
+  }
+
+  return true;
 }

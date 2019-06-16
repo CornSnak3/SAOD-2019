@@ -6,185 +6,342 @@
 #include "HashTable.h"
 #include "Utils.h"
 
-// Public
+// Public HashEntry
 
-HashTable::HashTable(int initialCapacity, ConsoleTable *linkedTable) :
-  linkedTable(linkedTable), capacity(initialCapacity), size(0) {
-  for (int i = 0; i < capacity; i++)
-    data.push_back(HashEntry());
-}
-  
-double HashTable::loadFactor(void) const {
-    return (size / capacity);
-}
+HashEntry::HashEntry(void) : 
+  status_(EMPTY), value_(nullptr) { }
 
-int HashTable::getSize(void) const {
-  return size;
-}
 
-bool HashTable::insert(const HashEntry &entry) {
-  int currentPosition = findEmptyPosition(entry.value.getField(idFieldName));
-  if (data[currentPosition].status != REMOVED)
-    ++size;
-  data[currentPosition].status = OCCUPIED;
-  data[currentPosition].value = entry.value;
-  if (loadFactor() > maxLoadFactor)
-    rehash();
-  return true;
+HashEntry::HashEntry(Passenger& passenger) :
+  status_(OCCUPIED), value_(passenger) { }
+
+
+HashEntry::~HashEntry() { }
+
+
+
+Passenger HashEntry::getValue(void)
+{
+  return value_;
 }
 
-HashEntry *HashTable::find(std::pair<std::string, std::string> &fieldValue) {
-  int position = findPosition(fieldValue.second);
-  if (position < 0 || position > capacity)
-    return nullptr;
-  if (data.at(position).value.getField(fieldValue.first) == fieldValue.second) {
-    HashEntry *returnPtr = &(data.at(position));
-    return returnPtr;
-  } else {
-    return nullptr;
+
+DataStatus HashEntry::getStatus(void)
+{
+  return status_;
+}
+
+
+
+void HashEntry::setValue(const Passenger& passenger)
+{
+  value_ = passenger;
+}
+
+
+void HashEntry::setStatus(const DataStatus& status)
+{
+  status_ = status;
+}
+
+
+
+// Public HashTable
+
+HashTable::HashTable
+   (
+      int initialCapacity, ConsoleTable *linkedTable, int maxLoadFactor = 0.75, 
+      std::string& idFieldName = static_cast<std::string> ("passportNumber")
+    ) :
+  capacity_(initialCapacity), linkedTable_(linkedTable), 
+  MAX_LOAD_FACTOR(maxLoadFactor), ID_FIELD_NAME(idFieldName), size_(0) 
+{
+  for (int i = 0; i < capacity_; i++) {
+    data_.push_back(HashEntry());
   }
 }
 
-bool HashTable::contains(std::pair<std::string, std::string> &entry) {
-  HashEntry *found = find(entry);
-  return (found->value.getField(idFieldName) == entry.second);
+
+  
+double HashTable::getLoadFactor(void) const noexcept
+{
+    return (size_ / capacity_);
 }
 
-void HashTable::displaySearchByPassport(std::string passportNumber) {
-  std::pair<std::string, std::string> entry = std::make_pair("passportNumber", passportNumber);
+
+int HashTable::getSize(void) const noexcept
+{
+  return size_;
+}
+
+
+int HashTable::getCapacity(void) const noexcept
+{
+  return capacity_;
+}
+
+
+
+bool HashTable::isOccupied(int position)
+{
+  return (data_.at(position).getStatus() == OCCUPIED);
+}
+
+
+bool HashTable::contains(std::pair<std::string, std::string> &entry)
+{
   HashEntry *found = find(entry);
-  if (found == nullptr) {
+  return (found->getValue.getField(ID_FIELD_NAME) == entry.second);
+}
+
+
+int HashTable::insert(const HashEntry& entryToInsert)
+{
+  int position = 
+    findEmptyPosition(entryToInsert.getValue.getField(ID_FIELD_NAME));
+
+  HashEntry* foundEntry = &(data_.at(position));
+
+  if (foundEntry->getStatus != REMOVED) {
+    ++size_;
+  }
+
+  foundEntry->setStatus(OCCUPIED);
+  foundEntry->setValue(entryToInsert.getValue());
+
+  if (getLoadFactor() > MAX_LOAD_FACTOR) {
+    rehash();
+  }
+
+  delete foundEntry;
+  return position;
+}
+
+
+bool HashTable::remove(std::pair<std::string, std::string> &fieldValue)
+{
+  bool result = false;
+
+  for (auto& e : data_) {
+    if (e.getValue().getField(fieldValue.first) == fieldValue.second) {
+      result = remove(e);
+    }
+  }
+
+  return result;
+}
+
+
+
+void HashTable::displaySearchByPassport(std::string& passportNumber) const
+{
+  std::pair<std::string, std::string> entry = 
+    std::make_pair("passportNumber", passportNumber);
+
+  HashEntry *foundEntry = find(entry);
+
+  if (foundEntry == nullptr) {
     std::cout << "Ïàññàæèð ñ íîìåðîì ïàñïîðòà '" << passportNumber << "' íå íàéäåí" << std::endl;
-  } else {
+  }
+  else {
     system("cls");
-    Utils::printHeader("ÏÎÈÑÊ ÏÀÑÑÀÆÈÐÀ");
+    utils::printHeader("ÏÎÈÑÊ ÏÀÑÑÀÆÈÐÀ");
+
     ConsoleTable *tempTable =
       new ConsoleTable{ "Íîìåð ïàñïîðòà", "Äàòà âûäà÷è", "ÔÈÎ", "Äàòà ðîæäåíèÿ" };
-    auto rowVector = found->value.getVector();
+
+    auto rowVector = foundEntry->getValue().getVector();
     tempTable->addRow(rowVector);
+
     std::cout << *tempTable;
+
     delete tempTable;
   }
+  delete foundEntry;
 }
 
-void HashTable::displaySearchByName(std::string name) {
+
+void HashTable::displaySearchByName(std::string& name) const
+{
   std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
   std::vector<HashEntry> searchResults;
-  for (auto entry : data) {
-    std::string currentEntry = entry.value.getField("fullName");
-    std::transform(currentEntry.begin(), currentEntry.end(), currentEntry.begin(), ::toupper);
-    if (currentEntry.find(name) != std::string::npos)
+
+  for (auto entry : data_) {
+    std::string currentEntryName = entry.getValue().getField("fullName");
+    std::transform(currentEntryName.begin(), currentEntryName.end(), 
+                   currentEntryName.begin(), ::toupper);
+
+    if (currentEntryName.find(name) != std::string::npos) {
       searchResults.push_back(entry);
+    }
   }
+
   if (searchResults.empty()) {
-    Utils::printHeader("ÏÀÑÑÀÆÈÐÛ ÏÎ ÇÀÏÐÎÑÓ '" + name + "' ÍÅ ÍÀÉÄÅÍÛ");
-  } else {
+    utils::printHeader("Ïàññàæèðû ïî çàïðîñó '" + name + "' íå íàéäåíû");
+  }
+  else {
     system("cls");
-    Utils::printHeader("ÏÎÈÑÊ ÏÀÑÑÀÆÈÐÎÂ");
+    utils::printHeader("ÏÎÈÑÊ ÏÀÑÑÀÆÈÐÎÂ");
+
     ConsoleTable *tempTable =
       new ConsoleTable{ "Íîìåð ïàñïîðòà", "Äàòà âûäà÷è", "ÔÈÎ", "Äàòà ðîæäåíèÿ" };
+
     for (auto entry : searchResults) {
-      auto rowVector = entry.value.getVector();
+      auto rowVector = entry.getValue().getVector();
       tempTable->addRow(rowVector);
     }
+
     std::cout << *tempTable;
     delete tempTable;
   }
 }
 
-bool HashTable::isOccupied(int currentPosition) const {
-  return (data.at(currentPosition).status == OCCUPIED);
-}
 
-bool HashTable::remove(std::pair<std::string, std::string> &fieldValue) {
-  bool flag = false;
-  for (auto &e : data) {
-    if (e.value.getField(fieldValue.first) == fieldValue.second)
-      flag = remove(e);
+
+HashEntry *HashTable::find(std::pair<std::string, std::string>& field)
+{
+  int position = findPosition(field.second);
+
+  if (position < 0 || position > capacity_) {
+    return nullptr;
   }
-  return flag;
-}
 
-std::vector<std::string> HashTable::getCollisions(std::string s) {
-  std::vector<std::string> collisions;
-  int goal = hashCode(s);
-  int count = 0;
-    for (int i = 0; i < 9; i++) {
-      std::string firstPart = "400" + std::to_string(i) + "0-";
-      for (int j = 0; j < 1000000; j++) {
-        std::string secondPart = std::to_string(j);
-        while (secondPart.size() != 6)
-          secondPart = "0" + secondPart;
-        if (goal == hashCode(firstPart + secondPart)) {
-          collisions.push_back(firstPart + secondPart);
-          std::cout << "FOUND " << firstPart + secondPart << std::endl;
-          count++;
-        }
-        if (count > 10)
-          return collisions;
-      }
- 
-    std::cout << "400" << std::to_string(i) << "- out" << std::endl;
+  HashEntry* foundEntry = &(data_.at(position));
+
+  if (foundEntry->getValue().getField(field.first) == field.second) {
+    return foundEntry;
+  } 
+  else {
+    return nullptr;
   }
-    return collisions;
-}
- 
-// Private
-
-size_t HashTable::hashCode(const std::string &element) const {
-  return (std::hash<std::string>()(element) % capacity); 
 }
 
-HashEntry *HashTable::searchByPassport(std::string passportNumber) {
-  std::pair<std::string, std::string> toFind =
-    std::make_pair("passportNumber", passportNumber);
-  return find(toFind);
+
+
+// Private HashTable
+
+size_t HashTable::hashCode(const std::string& element) const
+{
+  return (std::hash<std::string>()(element) % capacity_);
 }
 
-int HashTable::findEmptyPosition(const std::string &id) const {
+
+int HashTable::findEmptyPosition(const std::string& id)
+{
   int collisions = 0;
   int currentPosition = hashCode(id);
-  while (data[currentPosition].status != EMPTY) {
+
+  while (data_.at(currentPosition).getStatus() != EMPTY) {
     currentPosition = currentPosition + 2 * ++collisions - 1;
-    if (currentPosition > capacity)
-      currentPosition -= capacity;
+
+    if (currentPosition > capacity_) {
+      currentPosition -= capacity_;
+    }
   }
+
   return currentPosition;
 }
 
-int HashTable::findPosition(const std::string &id) {
+
+int HashTable::findPosition(const std::string& id)
+{
   int currentPosition = hashCode(id);
   int collisions = 0;
-  while (data[currentPosition].status != OCCUPIED) {
+
+  while (data_.at(currentPosition).getStatus() != OCCUPIED) {
     currentPosition = currentPosition + 2 * ++collisions - 1;
-    if (currentPosition > capacity - 1)
-      currentPosition -= capacity;
-    if (collisions > capacity - 1)
+
+    if (currentPosition > capacity_ - 1) {
+      currentPosition -= capacity_;
+    }
+    if (collisions > capacity_ - 1) {
       return -1;
+    }
   }
+
   return currentPosition;
 }
 
-bool HashTable::remove(const HashEntry &x) {
-  int currentPosition = findPosition(x.value.getField(idFieldName));
-  if (data[currentPosition].status != OCCUPIED)
+
+bool HashTable::remove(const HashEntry& entryToRemove)
+{
+  int position =
+    findPosition(entryToRemove.getValue().getField(ID_FIELD_NAME));
+
+  HashEntry* foundEntry = &(data_.at(position));
+
+  if (foundEntry->getStatus() != OCCUPIED) {
+    delete foundEntry;
     return false;
-  if (data[currentPosition].value.getField(idFieldName) == x.value.getField(idFieldName)) {
-    data[currentPosition].status = REMOVED;
-    size--;
-    linkedTable->remove(data[currentPosition].value.getField(idFieldName));
+  }
+
+  if (foundEntry->getValue().getField(ID_FIELD_NAME) ==
+      entryToRemove.getValue().getField(ID_FIELD_NAME)) {
+
+    foundEntry->setStatus(REMOVED);
+    size_--;
+    linkedTable_->remove(foundEntry->getValue().getField(ID_FIELD_NAME));
+
+    delete foundEntry;
     return true;
   }
+
+  delete foundEntry;
   return false;
 }
 
-void HashTable::rehash(void) {
-  std::vector<HashEntry> oldVector = data;
-  data.resize(2 * oldVector.size());
-  for (auto & hashEntry : data)
-    hashEntry.status = EMPTY;
-  size = 0;
-  for (auto & hashEntry : oldVector)
-    if (hashEntry.status == OCCUPIED)
+
+void HashTable::rehash(void)
+{
+  std::vector<HashEntry> oldVector = data_;
+  data_.resize(2 * oldVector.size());
+
+  for (auto& hashEntry : data_) {
+    hashEntry.setStatus(EMPTY);
+  }
+
+  size_ = 0;
+
+  for (auto& hashEntry : oldVector) {
+    if (hashEntry.getStatus() == OCCUPIED) {
       insert(hashEntry);
+    }
+  }
 }
+
+
+
+HashEntry *HashTable::searchByPassport(std::string passportNumber)
+{
+  std::pair<std::string, std::string> toFind =
+    std::make_pair("passportNumber", passportNumber);
+
+  return find(toFind);
+}
+
+
+
+//std::vector<std::string> HashTable::getCollisions(std::string s) {
+//  std::vector<std::string> collisions;
+//  int goal = hashCode(s);
+//  int count = 0;
+//    for (int i = 0; i < 9; i++) {
+//      std::string firstPart = "400" + std::to_string(i) + "0-";
+//      for (int j = 0; j < 1000000; j++) {
+//        std::string secondPart = std::to_string(j);
+//        while (secondPart.size() != 6)
+//          secondPart = "0" + secondPart;
+//        if (goal == hashCode(firstPart + secondPart)) {
+//          collisions.push_back(firstPart + secondPart);
+//          std::cout << "FOUND " << firstPart + secondPart << std::endl;
+//          count++;
+//        }
+//        if (count > 10)
+//          return collisions;
+//      }
+// 
+//    std::cout << "400" << std::to_string(i) << "- out" << std::endl;
+//  }
+//    return collisions;
+//}

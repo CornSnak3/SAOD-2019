@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace Utils {
+namespace utils {
   void printHeader(std::string);
   int executeMenu(const std::vector<std::string> &);
   void drawMenu(const std::vector<std::string> &, int);

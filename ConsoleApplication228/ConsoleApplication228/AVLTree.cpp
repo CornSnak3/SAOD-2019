@@ -209,10 +209,10 @@ void AVLTree::displaySearchByNumber(std::string number) {
   std::vector<Flight> *searchResults;
   searchByNumber(number, root, searchResults);
   if (searchResults->empty() || searchResults == nullptr) {
-    Utils::printHeader("РЕЙС С НОМЕРОМ '" + number + "' НЕ НАЙДЕН");
+    utils::printHeader("РЕЙС С НОМЕРОМ '" + number + "' НЕ НАЙДЕН");
   } else {
     system("cls");
-    Utils::printHeader("ПОИСК АВИАРЕЙСОВ");
+    utils::printHeader("ПОИСК АВИАРЕЙСОВ");
 
     ConsoleTable *tempTable = new ConsoleTable{ 
       "Номер рейса", "Авиакомпания", "Отправление", "Прибытие",
@@ -229,7 +229,7 @@ void AVLTree::displaySearchByNumber(std::string number) {
 }
 
 void AVLTree::displaySearchByPattern(std::string pattern) {
-  Utils::printHeader("ПОИСК ПО ПАТТЕРНУ '" + pattern + "'");
+  utils::printHeader("ПОИСК ПО ПАТТЕРНУ '" + pattern + "'");
   std::vector<Flight> *searchResults = searchByPattern(pattern);
   ConsoleTable *tempTable =
     new ConsoleTable{ "Номер рейса", "Авиакомпания", "Отправление", "Прибытие",

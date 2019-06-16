@@ -1,5 +1,5 @@
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
+#ifndef SAOD_HASHTABLE_H
+#define SAOD_HASHTABLE_H
 
 #include <algorithm>
 #include <functional>
@@ -9,52 +9,70 @@
 #include "ConsoleTable.h"
 #include "Passenger.h"
 
-enum DataStatus { OCCUPIED, EMPTY, REMOVED };
+enum DataStatus { 
+  OCCUPIED, EMPTY, REMOVED 
+};
 
 class HashEntry {
-public:
-  Passenger value;
-  DataStatus status;
-  HashEntry() : status(EMPTY) {}
-  HashEntry(Passenger &p) : value(p), status(OCCUPIED) { }
-  ~HashEntry() { }
+
+public: 
+  HashEntry(void)       { }
+  HashEntry(Passenger&) { }
+  ~HashEntry()          { }
+
+  Passenger  getValue  (void);
+  DataStatus getStatus (void);
+  
+  void       setValue  (const Passenger&);
+  void       setStatus (const DataStatus&);
+
+private:
+  Passenger  value_;
+  DataStatus status_;
+
 };
+
+
 
 class HashTable { 
 
 public:
-  HashTable(int, ConsoleTable *);
-  std::string idFieldName = "passportNumber";
 
-  const double maxLoadFactor = 0.75;
-
-  double loadFactor(void) const;
-  int getSize(void) const;
-  bool isOccupied(int) const;
-
-  bool insert(const HashEntry &);
-  bool contains(std::pair<std::string, std::string> &);
-
-  void displaySearchByPassport(std::string);
-  void displaySearchByName(std::string);
-
-
-  HashEntry *find(std::pair<std::string, std::string> &);
-  bool remove(std::pair<std::string, std::string> &);
+  HashTable(int, ConsoleTable*, int, std::string&);
   
-  std::vector<std::string> getCollisions(std::string);
+  double     getLoadFactor (void) const noexcept;
+  int        getSize       (void) const noexcept;
+  int        getCapacity   (void) const noexcept;
 
+  bool       isOccupied    (int);
+  bool       contains      (std::pair<std::string, std::string>&);
+  int        insert        (const HashEntry&);
+  bool       remove        (std::pair<std::string, std::string>&);
+
+  void       displaySearchByPassport (std::string&) const;
+  void       displaySearchByName     (std::string&) const;
+
+  HashEntry* find  (std::pair<std::string, std::string>&);
+  
 private:
-  std::vector<HashEntry> data;
-  int capacity, size;
-  ConsoleTable *linkedTable;
 
-  size_t hashCode(const std::string &) const;
-  HashEntry * searchByPassport(std::string passportNumber);
-  int findEmptyPosition(const std::string &) const;
-  int findPosition(const std::string &);
-  bool remove(const HashEntry &);
-  void rehash(void);
+  const double      MAX_LOAD_FACTOR;
+  const std::string ID_FIELD_NAME;
+
+  int size_;
+  int capacity_;
+
+  ConsoleTable*          linkedTable_;
+  std::vector<HashEntry> data_;
+
+  size_t     hashCode          (const std::string&) const;
+  int        findEmptyPosition (const std::string&);
+  int        findPosition      (const std::string&);
+  bool       remove            (const HashEntry&);
+  void       rehash            (void);
+
+  HashEntry* searchByPassport(std::string passportNumber);
+
 };
 
-#endif // HASHTABLE_H
+#endif // SAOD_HASHTABLE_H
