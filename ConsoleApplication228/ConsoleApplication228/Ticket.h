@@ -4,33 +4,35 @@
 #include <iostream>
 #include <string>
 
-enum TicketStatus {
-  SOLD, RETURNED
-};
+#include "Flight.h"
+#include "Passenger.h"
 
 
 class Ticket {
 
 public:
 
-  Ticket(void);
-  Ticket(std::string *);
-  ~Ticket(void);
+  Ticket  (void);
+  Ticket  (std::string *);
+  Ticket  (Passenger&, Flight&);
+
+  ~Ticket (void);
 
   bool flipStatus(void);
 
   std::string getFlightNumber(void);
   std::string getTicketNumber(void);
 
-  friend bool          operator< (const Ticket&, const Ticket&);
-  friend bool          operator==(const Ticket&, const Ticket&);
-  friend std::ostream& operator<<(std::ostream&, const Ticket&);
+  std::vector<std::string> getVector(void) const;
 
+  friend bool operator< (const Ticket&, const Ticket&);
+  friend bool operator==(const Ticket&, const Ticket&);
+  
 
 private:
 
-  std::string  passportNumber_, flightNumber_, ticketNumber_;
-  TicketStatus status;
+  std::string  passportNumber_, flightNumber_,
+               ticketNumber_, status_;
 
 };
 

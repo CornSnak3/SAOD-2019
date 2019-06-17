@@ -1,5 +1,7 @@
+#include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <string>
 #include <windows.h>
 
@@ -13,7 +15,23 @@ Ticket::Ticket(std::string* parameters)
   passportNumber_ = parameters[0];
   flightNumber_   = parameters[1];
   ticketNumber_   = parameters[2];
-  status = SOLD;
+  status_ = "Продан";
+}
+
+
+Ticket::Ticket(Passenger &passenger, Flight &flight)
+{
+  std::mt19937 gen { std::random_device()() };
+  std::uniform_int_distribution<> uid(0, 9);
+  std::string randomNumber;
+  for (int i = 0; i < 9; i++) {
+    randomNumber += std::to_string(uid(gen));
+  }
+
+  passportNumber_ = passenger.getField("passportNumber");
+  flightNumber_   = flight.getField("flightNumber");
+  ticketNumber_   = randomNumber;
+  status_         = "Продан";
 }
 
 
@@ -33,9 +51,21 @@ std::string Ticket::getFlightNumber()
 }
 
 
+std::vector<std::string> Ticket::getVector(void) const
+{
+  std::vector<std::string> returnVector;
+  returnVector.push_back(ticketNumber_);
+  returnVector.push_back(passportNumber_);
+  returnVector.push_back(flightNumber_);
+  returnVector.push_back(status_);
+
+  return returnVector;
+}
+
+
 bool Ticket::flipStatus()
 {
-  status = RETURNED;
+  status_ = "Возвращен";
   return true;
 }
 
@@ -43,31 +73,13 @@ bool Ticket::flipStatus()
 
 bool operator<(const Ticket& l, const Ticket& r)
 {
-  for (int i = 0; i < l.ticketNumber_.size(); i++) {
-    if (l.ticketNumber_[i] < r.ticketNumber_[i]) {
-      return true;
-    }
-  }
-  
-  return false;
+  return l.ticketNumber_ < r.ticketNumber_;
 }
 
 
 bool operator==(const Ticket& r, const Ticket& l) 
 {
-  return 
-    r.ticketNumber_   == l.ticketNumber_   &&
-    r.passportNumber_ == l.passportNumber_ &&
-    r.flightNumber_   == l.flightNumber_   &&
-    r.status          == l.status;
+  return
+    r.ticketNumber_ == l.ticketNumber_;
 }
 
-// TODO
-
-std::ostream &operator<<(std::ostream &o, const Ticket &t)
-{
-  std::string temp = (t.status == SOLD) ? "SOLD" : "RETURNED";
-  std::cout << std::setw(15) << std::left << t.ticketNumber_ << std::setw(15) << std::left << t.flightNumber_ <<
-    std::setw(15) << std::left << t.passportNumber_ << std::setw(10) << std::left << temp << std::endl; 
-  return o;
-}

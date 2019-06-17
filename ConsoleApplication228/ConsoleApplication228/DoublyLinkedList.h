@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "ConsoleTable.h"
 #include "Ticket.h"
 
 
@@ -11,7 +12,7 @@ class DoublyLinkedList {
 
 public:
 
-  DoublyLinkedList ();
+  DoublyLinkedList (ConsoleTable *);
   ~DoublyLinkedList();
 
   void    pushBack      (Ticket &);
@@ -32,17 +33,20 @@ private:
     Node*  prev;
   };
 
+  ConsoleTable* linkedTable_;
 
   int   size_;
   Node* head_;
   Node* tail_;
 
 
-  Node* at         (int);
-  Node* createNode (Ticket&);
-  Node* findMin    (void) const;
-  void  emptyList  (void);
-  void  removeNode (Node*);
+  Node* at           (int);
+  Node* createNode   (Ticket&);
+  Node* findMin      (int);
+  void  emptyList    (void);
+  void  removeNode   (Node*);
+  void  updateTable  (void);
+  void  swap         (Node*, Node*);
 
 };
 

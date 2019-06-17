@@ -10,7 +10,7 @@
 
 #define CONSOLE_COLOR_BLACK 0
 #define CONSOLE_COLOR_BLUE  1
-#define CONSOLE_COLOR_WHITE 7
+#define CONSOLE_COLOR_WHITE 15
 
 class Menu {
 private:

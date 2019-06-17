@@ -15,8 +15,8 @@ struct listOutOfBoundsException : public std::exception
 
 // Public DoublyLinkedList
 
-DoublyLinkedList::DoublyLinkedList() : 
-  size_(0), head_(nullptr), tail_(nullptr) { }
+DoublyLinkedList::DoublyLinkedList(ConsoleTable *linkedTable) : 
+  size_(0), head_(nullptr), tail_(nullptr), linkedTable_(linkedTable) { }
 
 
 DoublyLinkedList::~DoublyLinkedList()
@@ -48,7 +48,16 @@ void DoublyLinkedList::pushBack(Ticket& ticket)
   }
 
   size_++;
+  linkedTable_->addRow(ticket.getVector());
 }
+
+
+//void DoublyLinkedList::pushBack(Node* node)
+//{
+//  if (head_ == nullptr)
+//    head_ == newNode;
+//}
+
 
 
 void DoublyLinkedList::remove(int index)
@@ -58,6 +67,7 @@ void DoublyLinkedList::remove(int index)
   try {
     nodeTodelete = at(index);
     removeNode(nodeTodelete);
+    updateTable();
   }
   catch (listOutOfBoundsException &e) {
     std::cout << e.what() << index << std::endl;
@@ -72,6 +82,7 @@ void DoublyLinkedList::remove(Ticket& data)
   while (currentNode != nullptr) {
     if (data == currentNode->data) {
       removeNode(currentNode);
+      updateTable();
       return;
     }
 
@@ -82,9 +93,11 @@ void DoublyLinkedList::remove(Ticket& data)
 // TODO
 bool DoublyLinkedList::returnTicket(std::string passportNumber)
 {
-  for (int i = 0; i < this->size_; i++) {
-    if (this->at(i)->data.getTicketNumber() == passportNumber) {
-      return this->at(i)->data.flipStatus();
+  for (int i = 0; i < size_; i++) {
+    if (at(i)->data.getTicketNumber() == passportNumber) {
+      at(i)->data.flipStatus();
+      updateTable();
+      return true;
     }
   }
   return false;
@@ -93,23 +106,32 @@ bool DoublyLinkedList::returnTicket(std::string passportNumber)
 
 void DoublyLinkedList::insertionSort(void)
 {
-  for (int i = 0; i < this->size_; i++) {
-    Node* newHead = findMin();
-    remove(newHead->data);
+  std::vector<Node> vec;
 
-    head_->prev = newHead;
-    newHead->prev = nullptr;
-    newHead->next = head_;
-    head_ = newHead;
+  int size = size_;
+
+  for (int i = 0; i < size; i++) {
+    auto *temp = findMin(0);
+    vec.push_back(*temp);
+    remove(temp->data);
   }
+
+  emptyList();
+  updateTable();
+
+  for (Node &n : vec) {
+    pushBack(n.data);
+  }
+ 
 }
 
 
-DoublyLinkedList::Node* DoublyLinkedList::findMin() const
+DoublyLinkedList::Node* DoublyLinkedList::findMin(int startPosition)
 {
-  Node*  node = head_;
+  Node*  node = at(startPosition);
   Node*  retNode;
-  Ticket min;
+  std::string params[] = { "", "", "999999999" };
+  Ticket min(params);
 
   while (node != nullptr) {
     if (node->data < min) {
@@ -122,7 +144,37 @@ DoublyLinkedList::Node* DoublyLinkedList::findMin() const
   return retNode;
 }
 
+void DoublyLinkedList::swap(Node* n1, Node* n2) {
 
+  std::cout << "Swapping " << n1->data.getTicketNumber() << " <-> " <<
+    n2->data.getTicketNumber() << std::endl;
+
+  if (n1->data == n2->data)
+    return;
+
+  Node* temp = new Node;
+
+  temp->prev = n1->prev;
+  temp->next = n1->next;
+
+  n1->prev = n2->prev;
+  n1->next = n2->next;
+
+  n2->prev = temp->prev;
+  n2->next = temp->next;
+
+  if (n1->next != nullptr)
+    n1->next->prev = n2;
+  if (n1->prev != nullptr)
+    n1->prev->next = n2;
+  if (n2->next != nullptr)
+    n2->next->prev = n1;
+  if (n2->prev != nullptr)
+    n2->prev->next = n1;
+
+  delete temp;
+
+}
 
 int DoublyLinkedList::getSize(void)
 {
@@ -174,6 +226,8 @@ void DoublyLinkedList::emptyList(void)
     delete currentNode;
     currentNode = next;
   }
+
+  head_ = tail_ = nullptr;
 }
 
 
@@ -204,6 +258,16 @@ void DoublyLinkedList::removeNode(Node* nodeToDelete)
 
   delete nodeToDelete;
   size_--;
+}
+
+void DoublyLinkedList::updateTable(void)
+{
+  linkedTable_->removeAll();
+  Node* currentNode = head_;
+  while (currentNode != nullptr) {
+    linkedTable_->addRow(currentNode->data.getVector());
+    currentNode = currentNode->next;
+  }
 }
 
 
