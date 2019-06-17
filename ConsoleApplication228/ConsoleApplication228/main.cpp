@@ -15,6 +15,7 @@
 #include "DoublyLinkedList.h"
 #include "Flight.h"
 #include "HashTable.h"
+#include "Menu.h"
 #include "Passenger.h"
 #include "Ticket.h"
 #include "Utils.h"
@@ -60,8 +61,8 @@ void searchPassengerByPassport (void);
 
 
 // Функции работы с рейсами
-void newFlight();
-//void deleteFlight();
+void newFlight(void);
+void deleteFlight(void);
 //void deleteAllFlights();
 //void searchFlightByAirport();
 //void searchFlightByNumber();
@@ -75,7 +76,7 @@ void newFlight();
 //void showAllTickets();
 //
 
-void test(void);
+void demo(void);
 
 int inputint(void) {
   int x;
@@ -91,19 +92,19 @@ int inputint(void) {
 
 void executeMenu(void);
 
-vector<string> mainMenu = {
-  "ГЛАВНОЕ МЕНЮ", "Пассажиры", "Рейсы", "Билеты", "Тест" 
+initializer_list<string> mainMenuInitializerList = {
+  "ПРОДАЖА АВИАБИЛЕТОВ", "Пассажиры ", "Авиарейсы ", "Билеты    ", "Демо      " 
 };
 
-vector<string> passengersMenu = {
-  "ПАССАЖИРЫ", "Добавить", "Удалить", "Список", "Поиск по паспорту", "Поиск по имени" 
+initializer_list<string> passengersMenuInitializerList = {
+  "ПАССАЖИРЫ", "Добавить пассажира", "Удалить пассажира", "Список пассажиров", "Поиск по паспорту ", "Поиск по имени   " 
 };
 
-vector<string> flightsMenu = { 
-  "РЕЙСЫ", "Добавить", "Удалить", "Список", "Поиск по аэропорту"
+initializer_list<string> flightsMenuInitializerList = { 
+  "АВИАРЕЙСЫ", "Добавить          ", "Удалить           ", "Список            ", "Поиск по аэропорту"
 };
 
-vector<string> ticketsMenu = {
+initializer_list<string> ticketsMenu = {
   "БИЛЕТЫ", "Покупка", "Возврат", "Список"
 };
 
@@ -129,14 +130,18 @@ void executeMenu(void)
   while (true) {
 
     system("cls");
+    
+    Menu mainMenu      (mainMenuInitializerList);
+    Menu passengerMenu (passengersMenuInitializerList);
+    Menu flightsMenu   (flightsMenuInitializerList);
 
-    switch (utils::executeMenu(mainMenu)) 
+    switch (mainMenu.execute()) 
     {
       case -1:
         return;
 
       case 0:
-        switch (utils::executeMenu(passengersMenu)) // Меню пассажиров
+        switch (passengerMenu.execute()) // Меню пассажиров
         { 
           case -1:
             break;
@@ -172,7 +177,7 @@ void executeMenu(void)
 
       // Меню рейсов
       case 1:
-        switch (utils::executeMenu(flightsMenu))
+        switch (flightsMenu.execute())
         {      
           case -1:
             break;
@@ -220,7 +225,7 @@ void executeMenu(void)
       //  }
 
     case 3:
-      test();
+      demo();
       break;
     default:
       break;
@@ -230,9 +235,9 @@ void executeMenu(void)
 }
 
 
-// Test
+// Demo
 
-void test(void)
+void demo(void)
 {
   system("cls");
 
@@ -294,7 +299,8 @@ void test(void)
   cout << *passengersTable;
   system("pause");
 
-  cout << endl << "Удаление записи, имеющей коллизии в хэш-таблице" << endl;
+  cout << endl << "Удаление записи, имеющей коллизии \
+    в хэш-таблице (Волкова Ольга Викторовна)" << endl;
 
   pair<string, string> passengerToRemove = 
     make_pair("passportNumber", "4000-000056");
@@ -305,8 +311,10 @@ void test(void)
 
   
   // Тест рейсов
-  
-  
+
+  system("cls");
+
+  cout << "Вывод таблицы рейсов с тестовыми записями" << endl;
 
   initializer_list<string> testFlight2InitList = {
     "000-004", "S7 Airlines", "Москва Домодедово DME",
@@ -356,19 +364,43 @@ void test(void)
   flights->insert(testFlight1);
   flightsTable->addRow(testFlight1.getVector());
 
+
+  initializer_list<string> testFlight6InitList = {
+    "000-006", "Россия", "Москва VKO",
+    "Санкт-Петербург Пулково LED", "11 Июня, 20:05", "95", "95"
+  };
+
+  Flight testFlight6(testFlight6InitList);
+  flights->insert(testFlight6);
+  flightsTable->addRow(testFlight6.getVector());
+
+
+
+  initializer_list<string> testFlight7InitList = {
+    "000-007", "Победа", "Санкт-Петербург Пулково LED",
+    "Берлин SXF", "11 Июня, 08:05", "165", "165"
+  };
+
+  Flight testFlight7(testFlight7InitList);
+  flights->insert(testFlight7);
+  flightsTable->addRow(testFlight7.getVector());
+
+
   system("cls");
 
   flightsTable->removeAll();
+
   flights->addPostOrder();
 
-
   cout << *flightsTable;
+  flights->printTree();
 
   system("pause");
 
   flights->removeRoot();
 
   cout << *flightsTable;
+  flights->printTree();
 
   system("pause");
 
@@ -378,110 +410,163 @@ void test(void)
   flights->displaySearchByPattern(static_cast<string>("одед"));
   system("pause");
 
-
-
   flights->displaySearchByPattern(static_cast<string>("о LED"));
   system("pause");
 
-  cout << *flightsTable;
+  flights->displaySearchByPattern(static_cast<string>("Воркута"));
+
   system("pause");
-
-
-
 }
 
 
-void newPassenger(void) {
+void newPassenger(void)
+{
   utils::printHeader("НОВЫЙ ПАССАЖИР");
+
+  string queries[] = { 
+    "Номер паспорта", "Дата выдачи", "ФИО", "Дата рождения" 
+  };
+
   string s[4];
-  string queries[] = { "НОМЕР ПАСПОРТА", "ДАТА ВЫДАЧИ", "ФИО", "ДАТА РОЖДЕНИЯ" };
   for (int i = 0; i < 4; i++) {
     cin.ignore(cin.rdbuf()->in_avail());
     cout << setw(25) << left << queries[i] << ">> ";
     getline(cin, s[i]);
   }
-  initializer_list<string> passengerInitList = { s[0], s[1], s[2], s[3] };
+
+  initializer_list<string> passengerInitList = { 
+    s[0], s[1], s[2], s[3] 
+  };
+
   try {
     Passenger passenger(passengerInitList);
     passengers->insert(HashEntry(passenger));
     passengersTable->addRow(passenger.getVector());
     showAllPassengers();
     system("pause");
-  } catch (...) {
+  } 
+  catch (...) {
     return;
-  }
+  } // TODO
 }
 
-void deletePassenger(void) {
-  utils::printHeader("УДАЛИТЬ ПАССАЖИРА");
-  cout << setw(25) << left << "НОМЕР ПАСПОРТА" << ">> ";
+
+void deletePassenger(void)
+{
+  showAllPassengers();
+
+  utils::printHeader("УДАЛЕНИЕ ЗАПИСИ О ПАССАЖИРЕ");
+  cout << setw(25) << left << "Номер паспорта" << ">> ";
   string s;
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
+
   pair<string, string> p = make_pair("passportNumber", s);
-  if (passengers->remove(p)) 
-    cout << "ПАССАЖИР УДАЛЕН" << endl;
-  else  
-    cout << "ПАССАЖИР НЕ НАЙДЕН" << endl;
+
+  if (passengers->remove(p)) {
+    cout << "Данные о пассажире успешно удалены" << endl;
+  }
+  else {
+    cout << "Пассажир с введенным номером паспорта не найден" << endl;
+  }
+
   system("pause");
 }
 
-void showAllPassengers(void) {
+
+void showAllPassengers(void)
+{
   system("cls");
-  cout << *passengersTable;
+
+  utils::printHeader("СПИСОК ПАССАЖИРОВ");
+  cout << *passengersTable << endl;
 }
 
-void searchPassengerByName(void) {
+void searchPassengerByName(void)
+{
   system("cls");
+
+  utils::printHeader("ПОИСК ПАССАЖИРОВ ПО ИМЕНИ");
+  cout << setw(25) << left << "Имя или часть имени" << ">> ";
+
   string s;
-  cout << setw(25) << left << "ИМЯ ИЛИ ЧАСТЬ ИМЕНИ" << ">> ";
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
+
   passengers->displaySearchByName(s);
   system("pause");
 }
 
-void searchPassengerByPassport(void) {
+
+void searchPassengerByPassport(void)
+{
   system("cls");
+
+  utils::printHeader("ПОИСК ПАССАЖИРА ПО НОМЕРУ ПАСПОРТУ");
+  cout << setw(25) << left << "Номер паспорта" << ">> ";
+  
   string s;
-  cout << setw(25) << left << "НОМЕР ПАСПОРТА" << ">> ";
   cin.ignore(cin.rdbuf()->in_avail());
   getline(cin, s);
+
   passengers->displaySearchByPassport(s);
   system("pause");
 }
 
-void newFlight() {
+
+void newFlight(void)
+{
+  string queries[] = { 
+    "Номер рейса", "Авиакомпания", "Аэропорт отправления", "Аэропорт прибытия",
+    "Дата отправления", "Время отправления", "Всего мест" 
+  };
+
   string s[7];
-  string queries[] = { "FLIGHT NUMBER", "COMPANY", "DEPARTURE AIRPORT", "ARRIVAL AIRPORT",
-    "DEPARTURE DATE", "DEPARTURE TIME", "TOTAL SEATS" };
   for (int i = 0; i < 7; i++) {
     cin.ignore(cin.rdbuf()->in_avail());
     cout << setw(25) << left << queries[i];
     getline(cin, s[i]);
   }
-  initializer_list<string> flightInitList = { s[0], s[1], s[2], s[3], s[4], s[5], s[6] };
-  Flight flight(flightInitList);
-  flights->insert(flight);
-  cout << *flightsTable;
-  totalFlights++;
+
+  initializer_list<string> flightInitList = { 
+    s[0], s[1], s[2], s[3], s[4], s[5], s[6]
+  };
+
+  try {
+    Flight flight(flightInitList);
+    flights->insert(flight);
+    totalFlights++;
+    cout << "Рейс успешно добавлен" << endl << *flightsTable;
+    system("pause");
+  }
+  catch (...) {
+    return;
+  } // TODO
+}
+
+
+void deleteFlight(void)
+{
+  system("cls");
+  cout << *flightsTable << endl;
+
+  utils::printHeader("УДАЛЕНИЕ АВИАРЕЙСА");
+  cout << setw(25) << left << "Номер авиарейса" << ">> ";
+
+  string s;
+  cin.ignore(cin.rdbuf()->in_avail());
+  getline(cin, s);
+
+  if (flights->remove(s)) {
+    totalFlights--;
+    cout << "Авиарейс успешно удален" << endl;
+  }
+  else {
+    cout << "Авиарейс не найден" << endl;
+  }
+
   system("pause");
 }
-//
-//void deleteFlight() {
-//  system("cls");
-//  flights->display();
-//  string s;
-//  cout << "DELETE FLIGHT" << endl << setw(25) << left << "FLIGHT NUMBER";
-//  cin.ignore(cin.rdbuf()->in_avail());
-//  getline(cin, s);
-//  if (flights->remove(s)) {
-//    flightTotal--;
-//    cout << "FLIGHT REMOVED" << endl;
-//  } else
-//    cout << "FLIGHT NOT FOUND" << endl;
-//  system("pause");
-//}
 //
 //void searchFlightByAirport() {
 //  system("cls");

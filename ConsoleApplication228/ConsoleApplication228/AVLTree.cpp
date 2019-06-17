@@ -40,9 +40,15 @@ void AVLTree::addPostOrder(TreeNode* treeNode)
 }
 
 
+bool AVLTree::remove(std::string& flightNumber)
+{
+  return (remove(flightNumber, root_) == nullptr);
+}
+
+
 AVLTree::TreeNode *AVLTree::removeRoot()
 {
-  TreeNode* returnNode = remove(root_->data, root_);
+  TreeNode* returnNode = remove(root_->data.getField("flightNumber"), root_);
 
   linkedTable_->removeAll();
 
@@ -60,6 +66,13 @@ void AVLTree::insert(Flight &flight)
 void AVLTree::removeAll(void)
 {
   makeEmpty(root_);
+}
+
+
+void AVLTree::printTree(void)
+{
+  printTree(root_, 0);
+  std::cout << std::endl;
 }
 
 
@@ -95,6 +108,7 @@ void AVLTree::displaySearchByNumber(std::string& number)
 void AVLTree::displaySearchByPattern(std::string& pattern)
 {
   system("cls");
+  std::cout << *linkedTable_;
   utils::printHeader("Поиск рейсов по паттерну: '" + pattern + "'");
 
   std::vector<Flight> *searchResults = searchByPattern(pattern);
@@ -239,23 +253,25 @@ AVLTree::TreeNode* AVLTree::findMax(TreeNode* treeNode)
 }
 
 
-AVLTree::TreeNode* AVLTree::remove(Flight& flight, TreeNode* treeNode)
+AVLTree::TreeNode* AVLTree::remove(std::string& flightNumber, TreeNode* treeNode)
 {
   TreeNode* temp;
 
   if (treeNode == nullptr) {
     return nullptr;
   }
-  else if (flight < treeNode->data) {
-    treeNode->left = remove(flight, treeNode->left);
+  else if (flightNumber < treeNode->data.getField("flightNumber")) {
+    treeNode->left = remove(flightNumber, treeNode->left);
   }
-  else if (flight > treeNode->data) {
-    treeNode->right = remove(flight, treeNode->right);
+  else if (flightNumber < treeNode->data.getField("flightNumber")) {
+    treeNode->right = remove(flightNumber, treeNode->right);
   }
   else if (treeNode->left && treeNode->right) {
+
     temp            = findMin(treeNode->right);
     treeNode->data  = temp->data;
-    treeNode->right = remove(treeNode->data, treeNode->right);
+    treeNode->right = remove(treeNode->data.getField("flightNumber"),
+                             treeNode->right);
   } 
   else {
     temp = treeNode;
@@ -332,6 +348,30 @@ void AVLTree::postOrder(TreeNode *t, std::string pattern, std::vector<Flight> *f
   if (t->data.searchBoyerMoore(pattern)) {
     flightVector->push_back(t->data);
   }
+}
+
+
+
+void AVLTree::printTree(TreeNode* root, int numberOfSpaces)
+{
+  if (root == nullptr) {
+    return;
+  }
+
+  numberOfSpaces += 12;
+
+  printTree(root->right, numberOfSpaces);
+
+  std::cout << std::endl;
+
+  for (int i = 12; i < numberOfSpaces; i++) {
+    std::cout << " ";
+  }
+
+  std::cout << "|" << root->data.getField("flightNumber") << " <" << std::endl;
+
+  printTree(root->left, numberOfSpaces);
+
 }
 
 

@@ -15,7 +15,7 @@
 class Menu {
 private:
 
-  const int width = 97;
+  const int width = 126;
 
   struct MenuItem {
     uint8_t _number;
@@ -32,11 +32,13 @@ private:
   MenuItem header, hotkeys;
   std::vector<MenuItem> items_;
 
+  HANDLE hConsole;
+
 public:
 
   Menu(std::initializer_list<std::string> &menu) {
     uint8_t count = 98;
-    hotkeys = MenuItem(count, "?????/????(???????) | ?????(ESC) | ????(ENTER)");
+    hotkeys = MenuItem(count, "ббепу/бмхг(ярпекйх) | бшунд(ESC) | бшанп(ENTER)");
     for (auto item : menu) {
       if (count == 98) {
         header = MenuItem(count, item);
@@ -49,6 +51,8 @@ public:
     }
 
     items_.front()._isSelected = true;
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
   };
 
   void draw(void) {
@@ -92,7 +96,6 @@ public:
       }
     }
 
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, (WORD)((backgroundColor << 4) | foregroundColor));
     std::cout << item._paddedText << std::endl;
     SetConsoleTextAttribute(hConsole, (WORD)((0 << 4) | 15));
@@ -124,17 +127,21 @@ public:
       draw();
       keyPressed = _getch();
       switch (keyPressed) {
-      case 72: // ??????? ?????
+      case 72:
         selectedItemNumber = move(-1);
         break;
-      case 80: // ??????? ????
+
+      case 80:
         selectedItemNumber = move(1);
         break;
+
       case '\r':
         return selectedItemNumber;
         break;
+
       default:
         break;
+
       }
     } while (keyPressed != 27);
     return -1;
