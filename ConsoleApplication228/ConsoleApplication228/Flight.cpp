@@ -110,6 +110,8 @@ bool Flight::searchBoyerMoore(std::string substring)
 
 
 
+
+
 bool Flight::operator<(Flight &rvalue)
 {
   return (this->getField("flightNumber") < rvalue.getField("flightNumber"));

@@ -42,7 +42,10 @@ void AVLTree::addPostOrder(TreeNode* treeNode)
 
 bool AVLTree::remove(std::string& flightNumber)
 {
-  return (remove(flightNumber, root_) == nullptr);
+  bool res = (remove(flightNumber, root_) == nullptr);
+  linkedTable_->removeAll();
+  addPostOrder(root_);
+  return res;
 }
 
 
@@ -60,6 +63,8 @@ AVLTree::TreeNode *AVLTree::removeRoot()
 void AVLTree::insert(Flight &flight)
 {
   root_ = insert(flight, root_);
+  linkedTable_->removeAll();
+  addPostOrder(root_);
 }
 
 
@@ -76,10 +81,30 @@ void AVLTree::printTree(void)
 }
 
 
+bool AVLTree::contains(std::string& number)
+{
+  std::vector<Flight>* foundFlights = new std::vector<Flight>();
+  searchByNumber(number, root_, foundFlights);
+  bool ret = foundFlights->empty();
+  delete foundFlights;
+  return ret;
+}
+
+
+Flight * AVLTree::searchByNumber(std::string& number)
+{
+  std::vector<Flight>* foundFlights = new std::vector<Flight>();
+  searchByNumber(number, root_, foundFlights);
+  Flight *ret = (foundFlights->empty()) ? nullptr : &(foundFlights->front());
+  delete foundFlights;
+  return ret;
+}
+
+
 
 void AVLTree::displaySearchByNumber(std::string& number)
 {
-  std::vector<Flight>* searchResults;
+  std::vector<Flight>* searchResults = new std::vector<Flight>();
   searchByNumber(number, root_, searchResults);
   
   if (searchResults->empty() || searchResults == nullptr) {
@@ -101,6 +126,8 @@ void AVLTree::displaySearchByNumber(std::string& number)
 
     std::cout << *tempTable;
     delete tempTable;
+
+    delete searchResults;
   }
 }
 
@@ -180,7 +207,6 @@ AVLTree::TreeNode* AVLTree::insert(Flight& flight, TreeNode* treeNode)
   } 
 
   treeNode->height = std::max(height(treeNode->left), height(treeNode->right)) + 1;
-  addPostOrder(root_);
 
   return treeNode;
 }
@@ -263,7 +289,7 @@ AVLTree::TreeNode* AVLTree::remove(std::string& flightNumber, TreeNode* treeNode
   else if (flightNumber < treeNode->data.getField("flightNumber")) {
     treeNode->left = remove(flightNumber, treeNode->left);
   }
-  else if (flightNumber < treeNode->data.getField("flightNumber")) {
+  else if (flightNumber > treeNode->data.getField("flightNumber")) {
     treeNode->right = remove(flightNumber, treeNode->right);
   }
   else if (treeNode->left && treeNode->right) {

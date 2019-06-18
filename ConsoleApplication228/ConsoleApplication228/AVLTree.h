@@ -23,13 +23,15 @@ public:
   AVLTree  (ConsoleTable*);
   ~AVLTree (void);
 
-  void      addPostOrder (void);
-  void      addPostOrder (TreeNode*);
-  bool      remove       (std::string&);
-  TreeNode* removeRoot   (void);
-  void      insert       (Flight&);
-  void      removeAll    (void);
-  void      printTree    (void);
+  void      addPostOrder   (void);
+  void      addPostOrder   (TreeNode*);
+  bool      remove         (std::string&);
+  TreeNode* removeRoot     (void);
+  void      insert         (Flight&);
+  void      removeAll      (void);
+  void      printTree      (void);
+  bool      contains       (std::string&);
+  Flight*   searchByNumber (std::string&);
 
   void displaySearchByNumber(std::string&);
   void displaySearchByPattern(std::string&);

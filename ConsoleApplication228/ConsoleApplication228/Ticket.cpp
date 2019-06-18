@@ -28,6 +28,7 @@ Ticket::Ticket(Passenger &passenger, Flight &flight)
     randomNumber += std::to_string(uid(gen));
   }
 
+
   passportNumber_ = passenger.getField("passportNumber");
   flightNumber_   = flight.getField("flightNumber");
   ticketNumber_   = randomNumber;
